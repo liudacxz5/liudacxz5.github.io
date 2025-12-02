@@ -1,0 +1,235 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>RanGeRs_LD</title><meta name="author" content="RanGeRs_LD"><meta name="copyright" content="RanGeRs_LD"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta property="og:type" content="website">
+<meta property="og:title" content="RanGeRs_LD">
+<meta property="og:url" content="https://github.com/liudacxz5/liudacxz5.github.io/index.html">
+<meta property="og:site_name" content="RanGeRs_LD">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://github.com/liudacxz5/liudacxz5.github.io/img/avatar.png">
+<meta property="article:author" content="RanGeRs_LD">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/liudacxz5/liudacxz5.github.io/img/avatar.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://github.com/liudacxz5/liudacxz5.github.io/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":1,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'RanGeRs_LD',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'home'
+}</script><meta name="generator" content="Hexo 7.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">42</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">29</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">14</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page fixed" id="page-header" style="background: linear-gradient(20deg, #0062be, #925696, #cc426e, #fb0347);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/avatar.png" alt="Logo"><span class="site-name">RanGeRs_LD</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="site-info"><h1 id="site-title">RanGeRs_LD</h1><div id="site_social_icons"><a class="social-icon" href="https://github.com/liudacxz5" target="_blank" title="Github"><i class="fab fa-github" style="color: #hdhfbb;"></i></a><a class="social-icon" href="mailto:liudacxz5@163.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #000000;"></i></a><a class="social-icon" href="/ld309579590" target="_blank" title="Wexin"><i class="faw fa-weixin"></i></a></div></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts nc" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/12/02/FastAPI%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%96%B9%E5%BC%8F%E6%8E%A8%E8%8D%90/FastAPI%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%96%B9%E5%BC%8F%E6%8E%A8%E8%8D%90/" title="FastAPI数据库连接方式">FastAPI数据库连接方式</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-12-02T03:01:40.885Z" title="发表于 2025-12-02 03:01:40">2025-12-02</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-07-28T02:12:32.638Z" title="更新于 2025-07-28 02:12:32">2025-07-28</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%BC%80%E5%8F%91%E5%BF%83%E5%BE%97/">开发心得</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/FastAPI/">FastAPI</a></span></div><div class="content">FastAPI数据库连接方式推荐在 FastAPI 框架下结合 Pandas 操作数据库时，选择高效的数据库连接方式需综合考虑 异步性能、代码简洁性 和 Pandas 兼容性。以下是几种推荐方案及具体实现：  1. 异步驱动 + SQLAlchemy Core（推荐）结合异步数据库驱动（如 asyncpg）和 SQLAlchemy 的异步核心（SQLAlchemy Core），既能利用 FastAPI 的异步优势，又兼容 Pandas 的同步操作。 步骤说明 安装依赖： pip install fastapi sqlalchemy asyncpg pandas databases 配置异步数据库连接： from sqlalchemy.ext.asyncio import create_async_engine, AsyncSessionfrom sqlalchemy.orm import sessionmakerfrom sqlalchemy import text# 异步引擎配置（以 PostgreSQL 为例）DATABASE_URL = &quot;postgresql+a...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/12/02/FastApi%E5%9F%BA%E7%A1%80%E6%9E%B6%E6%9E%84/FastApi%E5%9F%BA%E7%A1%80%E6%9E%B6%E6%9E%84/" title="FastApi基础架构">FastApi基础架构</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-12-02T03:01:40.885Z" title="发表于 2025-12-02 03:01:40">2025-12-02</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-07-28T02:11:25.459Z" title="更新于 2025-07-28 02:11:25">2025-07-28</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%BC%80%E5%8F%91%E5%BF%83%E5%BE%97/">开发心得</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/FastAPI/">FastAPI</a></span></div><div class="content">以下是根据上述讨论整合的 完整 FastAPI 项目架构，包含模块化设计、分层抽象、依赖注入以及对 Pandas 数据操作的支持。该架构遵循现代后端开发的最佳实践，同时保持高扩展性和可维护性。  完整项目结构project-root/├── app/│   ├── core/                     # 核心抽象与接口定义│   │   ├── __init__.py│   │   └── repositories.py       # 抽象基类（如 BaseRepository）│   ├── data_access/              # 具体数据访问实现│   │   ├── pandas/               # Pandas 实现│   │   │   ├── __init__.py│   │   │   └── user_repository.py│   │   └── sql/                  # SQL 实现（可选，未来扩展）│   ├── services/                 # 业务逻辑层│   ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/11/27/RocketMQ%20python%E5%BC%82%E6%AD%A5%E6%B6%88%E8%B4%B9%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/RocketMQ%20python%E5%BC%82%E6%AD%A5%E6%B6%88%E8%B4%B9%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/" title="RocketMQ python异步消费数据丢失问题">RocketMQ python异步消费数据丢失问题</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-11-27T05:54:01.646Z" title="发表于 2025-11-27 05:54:01">2025-11-27</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-11-27T05:54:03.267Z" title="更新于 2025-11-27 05:54:03">2025-11-27</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%BC%80%E5%8F%91%E5%BF%83%E5%BE%97/">开发心得</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/RocketMQ/">RocketMQ</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Python/">Python</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E5%BC%80%E5%8F%91%E5%BF%83%E5%BE%97/">开发心得</a></span></div><div class="content">RocketMQ Python 客户端异步消费数据丢失问题的深度解析在构建高吞吐量的数据处理系统时，批量聚合消费（Batch Consumption） 是一种常见的优化策略。该策略通常涉及在消费者回调（Callback）中将消息暂存至内存缓冲区，随后由独立的后台线程进行批量处理。 然而，在使用 RocketMQ 的 Python 客户端（基于 C++内核封装）实现此模式时，常会出现一个隐蔽的内存问题：虽然在回调函数中消息内容正常，但在后台线程读取缓冲区时，消息的 body 变为空值或乱码。 本文将从内存管理和跨语言调用（FFI）的角度，分析该现象产生的根本原因，并提供相应的解决方案。 1. 问题现象在典型的异步缓冲模式中，程序逻辑如下：  回调阶段：_callback 函数接收消息，将其直接追加（Append）到内存列表（List）中，并立即返回 CONSUME_SUCCESS。 处理阶段：后台线程定期扫描该列表，尝试读取消息内容进行业务处理。  异常表现：尽管 Python 对象依然存在于列表中，但当后台线程延迟访问 msg.body 时，读取到的数据为空（Empty）或无效数...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/09/28/%E6%9C%AC%E5%9C%B0%E9%A1%B9%E7%9B%AE%E4%B8%8A%E4%BC%A0%E5%88%B0gitee/%E6%9C%AC%E5%9C%B0%E9%A1%B9%E7%9B%AE%E4%B8%8A%E4%BC%A0%E5%88%B0gitee/" title="本地项目上传到gitee">本地项目上传到gitee</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-09-28T01:56:46.490Z" title="发表于 2025-09-28 01:56:46">2025-09-28</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-09-28T01:56:49.468Z" title="更新于 2025-09-28 01:56:49">2025-09-28</time></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/gitee/">gitee</a></span></div><div class="content">如何将本地项目上传到 Gitee：完整操作指南在日常开发中，将本地项目托管到代码仓库是必不可少的工作流程。Gitee（码云）作为国内知名的代码托管平台，提供了稳定高效的 Git 服务。下面将详细介绍如何将本地项目上传到 Gitee 仓库。 准备工作开始之前，需要确保本地环境已经安装并配置好 Git：  安装 Git：从 Git 官网下载并安装最新版本的 Git 配置用户信息：在命令行中执行以下命令，设置全局用户名和邮箱git config --global user.name &quot;你的用户名&quot;git config --global user.email &quot;你的邮箱&quot;  操作步骤第一步：在 Gitee 创建远程仓库 登录 Gitee 账号，点击页面右上角的 “+” 号，选择”新建仓库” 填写仓库基本信息： 仓库名称：必填项，使用有意义的英文名称 路径：仓库的访问路径，通常与仓库名一致 仓库介绍：简要描述项目功能 开源选择：根据需求选择”公开”或”私有”   重要提示：如果上传的是全新项目，建议不要勾选”使用 Readme 文件初始化仓库”，以避...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/09/19/%E9%AB%98%E8%BE%BE%E8%A7%82%E5%BD%B1%E9%A1%BA%E5%BA%8F/%E9%AB%98%E8%BE%BE%E8%A7%82%E5%BD%B1%E9%A1%BA%E5%BA%8F/" title="高达观影顺序">高达观影顺序</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-09-19T07:43:38.644Z" title="发表于 2025-09-19 07:43:38">2025-09-19</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-09-19T07:43:39.321Z" title="更新于 2025-09-19 07:43:39">2025-09-19</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%8A%A8%E6%BC%AB/">动漫</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E9%AB%98%E8%BE%BE/">高达</a></span></div><div class="content">好的，整理高达（Gundam）系列的观看顺序是一个常见的需求，因为它的世界观庞大、时间线复杂。主要有两种观看顺序：按播出顺序和按故事年表（主要是宇宙世纪 U.C.）顺序。 对于初次接触高达的观众，强烈推荐按照动画的播出顺序观看，因为这是制作方默认的观看路径，可以更好地理解作品的演变和粉丝的讨论语境。  推荐方案一：按播出顺序（适合所有观众）这个顺序能让你体验到高达系列技术和思想的进化过程，也是最经典的观看方式。这里主要列出核心的、关联性强的作品。 第一阶段：宇宙世纪（U.C.）的起源与发展 《机动战士高达》 (0079) (1979) 地位：一切的起点，U.C. 宇宙世纪的开篇之作。建议观看剧场版三部曲，节奏更快，画面也经过重制。   《机动战士Z高达》 (1985) 地位：0079之后的故事，公认的神作之一，风格较为深刻和沉重。   《机动战士高达ZZ》 (1986) 地位：紧接Z高达的结局，风格前期较为轻松，后期回归严肃。   《机动战士高达 逆袭的夏亚》 (1988) 地位：U.C.纪元第一阶段的终结，讲述了初代主角阿姆罗和夏亚的最终对决。    第二阶段：U.C. 纪元的...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/09/19/mysql%E6%95%B0%E6%8D%AE%E8%BF%81%E7%A7%BB/mysql%E6%95%B0%E6%8D%AE%E8%BF%81%E7%A7%BB/" title="mysql数据迁移">mysql数据迁移</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-09-19T01:32:29.923Z" title="发表于 2025-09-19 01:32:29">2025-09-19</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-09-19T01:32:30.654Z" title="更新于 2025-09-19 01:32:30">2025-09-19</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%BC%80%E5%8F%91%E5%BF%83%E5%BE%97/">开发心得</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/mysql/">mysql</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a></span></div><div class="content">好的，为MySQL数据库创建一个一模一样的测试环境是非常常见的需求。有多种好方法可以实现，选择哪种取决于你的数据库大小、可接受的停机时间、以及你对工具的熟悉程度。 下面我将为您详细介绍几种主流的方法，并进行对比，帮助您选择最适合的方案。 方法一：使用 mysqldump (最常用、最灵活)这是最经典和通用的方法，它将数据库导出为一个包含所有 CREATE TABLE 和 INSERT 语句的 .sql 文本文件，然后在测试库中执行这个文件来恢复数据。 原理： 逻辑备份，将数据和结构导出为SQL语句。 步骤：  从生产库导出数据：打开终端或命令行，执行以下命令。系统会提示您输入密码。Bash # 导出整个数据库 (包括结构和数据)mysqldump -u [生产库用户名] -p [生产库数据库名] &gt; backup.sql# 如果生产库和测试库在不同服务器，需要加上主机地址mysqldump -h [生产库主机地址] -u [生产库用户名] -p [生产库数据库名] &gt; backup.sql# 如果数据量巨大，可以增加一些参数优化mysqldump --single-t...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/08/12/docker%20compose%E9%83%A8%E7%BD%B2rabbitMQ/docker%20compose%E9%83%A8%E7%BD%B2rabbitMQ/" title="docker compose部署rabbitMQ">docker compose部署rabbitMQ</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-08-12T01:59:08.912Z" title="发表于 2025-08-12 01:59:08">2025-08-12</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-08-12T01:59:09.238Z" title="更新于 2025-08-12 01:59:09">2025-08-12</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%BC%80%E5%8F%91%E5%BF%83%E5%BE%97/">开发心得</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/rabbitMQ/">rabbitMQ</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/docker/">docker</a></span></div><div class="content">Docker Compose 部署 RabbitMQ1. 创建 docker-compose.yml 文件version: &#x27;3.1&#x27;services:  rabbitmq:    restart: always    image: rabbitmq:management  # 使用自带管理插件的镜像    container_name: rabbitmq   # 自定义容器名称    hostname: rabbit           # 设置主机名    ports:      - &quot;5672:5672&quot;    # AMQP 协议端口      - &quot;15672:15672&quot;  # 管理界面端口    environment:      TZ: Asia/Shanghai        # 时区设置      RABBITMQ_DEFAULT_USER: rabbit  # 默认用户名      RABBITMQ_DEFAULT_PASS: 123456  # 默认密码    volumes:      - D:/...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/08/07/docker%E9%83%A8%E7%BD%B2oracle%E5%8F%8A%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5/docker%E9%83%A8%E7%BD%B2oracle%E5%8F%8A%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5/" title="Oracle Free 数据库 Docker 部署指南">Oracle Free 数据库 Docker 部署指南</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-08-07T03:53:02.544Z" title="发表于 2025-08-07 03:53:02">2025-08-07</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-08-07T06:07:51.094Z" title="更新于 2025-08-07 06:07:51">2025-08-07</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%BC%80%E5%8F%91%E5%BF%83%E5%BE%97/">开发心得</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/oacle/">oacle</a></span></div><div class="content">Oracle Free 数据库 Docker 部署指南1. 拉取 Docker 镜像docker pull container-registry.oracle.com/database/free:latest  2. 启动 Oracle 容器docker run -d --name oracle --restart always \  -p 1521:1521 \  container-registry.oracle.com/database/free:latest  参数说明：  -d：后台运行容器 --name：指定容器名称 --restart always：配置 Docker 自动重启容器 -p 1521:1521：将容器 1521 端口映射到宿主机（Oracle 默认端口）  3. 修改 DBA 用户密码docker exec -it oracle ./setPassword.sh &lt;YOUR_PASSWORD&gt;  4. 登录 Oracle 数据库docker exec -it oracle sqlplus sys@localhost:1521/FREE as...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/07/29/%E6%A8%A1%E5%9E%8B%E5%90%8D%E7%A7%B0%E6%8B%86%E8%A7%A3/%E6%A8%A1%E5%9E%8B%E5%90%8D%E7%A7%B0%E6%8B%86%E8%A7%A3/" title="模型名称拆解">模型名称拆解</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-07-29T02:00:26.085Z" title="发表于 2025-07-29 02:00:26">2025-07-29</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-07-29T02:00:26.344Z" title="更新于 2025-07-29 02:00:26">2025-07-29</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/AI%E7%9F%A5%E8%AF%86/">AI知识</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/AI/">AI</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E6%A8%A1%E5%9E%8B/">模型</a></span></div><div class="content">以”DeepSeek-R1-Distill-Llama-70B”为例，解析模型名称的含义 DeepSeek-R1-Distill-Llama-70B 这个模型名称是 DeepSeek 公司对模型架构、技术路径与规模的一个完整描述，拆解如下：  🔍 1. DeepSeek代表模型的开发公司——深度求索（DeepSeek），一家专注于大模型研发的中国人工智能公司，致力于推动开源模型生态的发展。  🧠 2. R1指代 DeepSeek 当前最先进的推理大模型系列（DeepSeek-R1）。  R1 是 DeepSeek 的旗舰模型，以强大的推理能力著称，尤其在数学、代码生成、逻辑链任务中表现优异。 它本身参数规模高达 6710 亿（671B），属于超大规模模型。   🪄 3. Distill代表“知识蒸馏”（Knowledge Distillation）技术。  作用：将大型教师模型（如 DeepSeek-R1）的推理能力“迁移”到更小的学生模型中，提升小模型的性能表现。 过程： 教师模型（R1）生成约 80 万推理样本（包括数学、代码、问答等）； 学生模型（这里指 Llama-...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/07/29/%E7%9F%A5%E8%AF%86%E8%92%B8%E9%A6%8F/%E7%9F%A5%E8%AF%86%E8%92%B8%E9%A6%8F/" title="知识蒸馏">知识蒸馏</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-07-29T01:43:56.411Z" title="发表于 2025-07-29 01:43:56">2025-07-29</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-07-29T03:34:42.375Z" title="更新于 2025-07-29 03:34:42">2025-07-29</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/AI%E7%9F%A5%E8%AF%86/">AI知识</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/AI/">AI</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E6%A8%A1%E5%9E%8B/">模型</a></span></div><div class="content">知识蒸馏（Knowledge Distillation）是一种模型压缩技术，核心思想是将一个庞大、复杂但性能强大的模型（称为“教师模型”）所学习到的“知识”，转移到一个更小、更轻量级的模型（称为“学生模型”）中去。 这里的“知识”并不是指模型训练的数据本身，而是指教师模型在训练数据上学到的输入到输出之间的映射关系，特别是那些隐性的、泛化性的模式和规律。 核心概念与过程 教师模型： 这是一个预先训练好的、通常非常大且复杂的模型（例如，大型的深度神经网络）。它在目标任务上表现优异，但计算开销大、推理速度慢。 学生模型： 这是一个目标模型，通常结构更简单、参数更少（例如，层数更少或宽度更小的网络）。它的目标是学习教师模型的行为，最终达到接近教师模型的性能，同时保持自身轻量化的优势。 蒸馏过程： 训练教师模型： 首先在训练数据集上训练好教师模型。 利用教师模型生成“软目标”： 这是知识蒸馏的关键。用教师模型对训练数据（或额外的未标注数据）进行预测。与通常只输出最终预测类别（硬目标）不同，教师模型会输出一个概率分布（软目标）。 硬目标： [0, 0, 1, 0, 0] （表示属于第3类） ...</div></div></div></div><nav id="pagination"><div class="pagination"><span class="page-number current">1</span><a class="page-number" href="/page/2/#content-inner">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/#content-inner">5</a><a class="extend next" rel="next" href="/page/2/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">RanGeRs_LD</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">42</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">29</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">14</div></a></div><a id="card-info-btn" href="https://github.com/liudacxz5"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/liudacxz5" target="_blank" title="Github"><i class="fab fa-github" style="color: #hdhfbb;"></i></a><a class="social-icon" href="mailto:liudacxz5@163.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #000000;"></i></a><a class="social-icon" href="/ld309579590" target="_blank" title="Wexin"><i class="faw fa-weixin"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/12/02/FastAPI%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%96%B9%E5%BC%8F%E6%8E%A8%E8%8D%90/FastAPI%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%96%B9%E5%BC%8F%E6%8E%A8%E8%8D%90/" title="FastAPI数据库连接方式">FastAPI数据库连接方式</a><time datetime="2025-12-02T03:01:40.885Z" title="发表于 2025-12-02 03:01:40">2025-12-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/12/02/FastApi%E5%9F%BA%E7%A1%80%E6%9E%B6%E6%9E%84/FastApi%E5%9F%BA%E7%A1%80%E6%9E%B6%E6%9E%84/" title="FastApi基础架构">FastApi基础架构</a><time datetime="2025-12-02T03:01:40.885Z" title="发表于 2025-12-02 03:01:40">2025-12-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/11/27/RocketMQ%20python%E5%BC%82%E6%AD%A5%E6%B6%88%E8%B4%B9%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/RocketMQ%20python%E5%BC%82%E6%AD%A5%E6%B6%88%E8%B4%B9%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/" title="RocketMQ python异步消费数据丢失问题">RocketMQ python异步消费数据丢失问题</a><time datetime="2025-11-27T05:54:01.646Z" title="发表于 2025-11-27 05:54:01">2025-11-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/28/%E6%9C%AC%E5%9C%B0%E9%A1%B9%E7%9B%AE%E4%B8%8A%E4%BC%A0%E5%88%B0gitee/%E6%9C%AC%E5%9C%B0%E9%A1%B9%E7%9B%AE%E4%B8%8A%E4%BC%A0%E5%88%B0gitee/" title="本地项目上传到gitee">本地项目上传到gitee</a><time datetime="2025-09-28T01:56:46.490Z" title="发表于 2025-09-28 01:56:46">2025-09-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/19/%E9%AB%98%E8%BE%BE%E8%A7%82%E5%BD%B1%E9%A1%BA%E5%BA%8F/%E9%AB%98%E8%BE%BE%E8%A7%82%E5%BD%B1%E9%A1%BA%E5%BA%8F/" title="高达观影顺序">高达观影顺序</a><time datetime="2025-09-19T07:43:38.644Z" title="发表于 2025-09-19 07:43:38">2025-09-19</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>分类</span>
+            <a class="card-more-btn" href="/categories/" title="查看更多">
+      <i class="fas fa-angle-right"></i></a>
+          </div>
+          <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/AI%E7%9F%A5%E8%AF%86/"><span class="card-category-list-name">AI知识</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/hexo/"><span class="card-category-list-name">hexo</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E5%8A%A8%E6%BC%AB/"><span class="card-category-list-name">动漫</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E5%BC%80%E5%8F%91%E5%BF%83%E5%BE%97/"><span class="card-category-list-name">开发心得</span><span class="card-category-list-count">16</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E6%8A%80%E6%9C%AF/"><span class="card-category-list-name">技术</span><span class="card-category-list-count">13</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E6%8A%80%E6%9C%AF/Spring/"><span class="card-category-list-name">Spring</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E6%8A%80%E6%9C%AF/docker/"><span class="card-category-list-name">docker</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E6%8A%80%E6%9C%AF/flask/"><span class="card-category-list-name">flask</span><span class="card-category-list-count">2</span></a></li></ul></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 1.1em; color: #999">图数据库</a> <a href="/tags/%E6%97%B6%E5%BA%8F%E7%89%B9%E5%BE%81/" style="font-size: 1.1em; color: #999">时序特征</a> <a href="/tags/oacle/" style="font-size: 1.1em; color: #999">oacle</a> <a href="/tags/flask/" style="font-size: 1.18em; color: #999ca1">flask</a> <a href="/tags/%E9%AB%98%E8%BE%BE/" style="font-size: 1.1em; color: #999">高达</a> <a href="/tags/rabbitMQ/" style="font-size: 1.1em; color: #999">rabbitMQ</a> <a href="/tags/Spring/" style="font-size: 1.18em; color: #999ca1">Spring</a> <a href="/tags/RocketMQ/" style="font-size: 1.1em; color: #999">RocketMQ</a> <a href="/tags/docker/" style="font-size: 1.26em; color: #999fa8">docker</a> <a href="/tags/%E6%A8%A1%E5%9E%8B/" style="font-size: 1.18em; color: #999ca1">模型</a> <a href="/tags/layui/" style="font-size: 1.1em; color: #999">layui</a> <a href="/tags/AI/" style="font-size: 1.18em; color: #999ca1">AI</a> <a href="/tags/sql/" style="font-size: 1.1em; color: #999">sql</a> <a href="/tags/mysql/" style="font-size: 1.1em; color: #999">mysql</a> <a href="/tags/hadoop/" style="font-size: 1.1em; color: #999">hadoop</a> <a href="/tags/Python/" style="font-size: 1.1em; color: #999">Python</a> <a href="/tags/oracle/" style="font-size: 1.42em; color: #99a6b7">oracle</a> <a href="/tags/nlp/" style="font-size: 1.1em; color: #999">nlp</a> <a href="/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97/" style="font-size: 1.18em; color: #999ca1">时间序列</a> <a href="/tags/excel/" style="font-size: 1.1em; color: #999">excel</a> <a href="/tags/%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" style="font-size: 1.1em; color: #999">开发基础知识</a> <a href="/tags/%E5%BC%80%E5%8F%91%E5%BF%83%E5%BE%97/" style="font-size: 1.34em; color: #99a3b0">开发心得</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 1.5em; color: #99a9bf">算法</a> <a href="/tags/git/" style="font-size: 1.18em; color: #999ca1">git</a> <a href="/tags/gitee/" style="font-size: 1.1em; color: #999">gitee</a> <a href="/tags/hexo/" style="font-size: 1.18em; color: #999ca1">hexo</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 1.1em; color: #999">数据库</a> <a href="/tags/FastAPI/" style="font-size: 1.18em; color: #999ca1">FastAPI</a> <a href="/tags/config/" style="font-size: 1.1em; color: #999">config</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline">
+      <i class="fas fa-archive"></i>
+      <span>归档</span>
+      <a class="card-more-btn" href="/archives/"
+            title="查看更多">
+            <i class="fas fa-angle-right"></i>
+          </a>
+    </div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/12/">
+            <span class="card-archive-list-date">
+              十二月 2025
+            </span>
+            <span class="card-archive-list-count">2</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/11/">
+            <span class="card-archive-list-date">
+              十一月 2025
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/09/">
+            <span class="card-archive-list-date">
+              九月 2025
+            </span>
+            <span class="card-archive-list-count">3</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/08/">
+            <span class="card-archive-list-date">
+              八月 2025
+            </span>
+            <span class="card-archive-list-count">2</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/07/">
+            <span class="card-archive-list-date">
+              七月 2025
+            </span>
+            <span class="card-archive-list-count">11</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/06/">
+            <span class="card-archive-list-date">
+              六月 2025
+            </span>
+            <span class="card-archive-list-count">2</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/05/">
+            <span class="card-archive-list-date">
+              五月 2025
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/04/">
+            <span class="card-archive-list-date">
+              四月 2025
+            </span>
+            <span class="card-archive-list-count">13</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">42</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2025-12-02T03:02:05.341Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;2024 - 2025 By RanGeRs_LD</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.2.0</a><span class="footer-separator">|</span><span>主题 </span><a href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.4.0-b2</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="translateLink" type="button" title="简繁转换">简</button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

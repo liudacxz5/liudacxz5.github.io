@@ -1,0 +1,245 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>本地项目上传到gitee | RanGeRs_LD</title><meta name="author" content="RanGeRs_LD"><meta name="copyright" content="RanGeRs_LD"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="如何将本地项目上传到 Gitee：完整操作指南在日常开发中，将本地项目托管到代码仓库是必不可少的工作流程。Gitee（码云）作为国内知名的代码托管平台，提供了稳定高效的 Git 服务。下面将详细介绍如何将本地项目上传到 Gitee 仓库。 准备工作开始之前，需要确保本地环境已经安装并配置好 Git：  安装 Git：从 Git 官网下载并安装最新版本的 Git 配置用户信息：在命令行中执行以下命令">
+<meta property="og:type" content="article">
+<meta property="og:title" content="本地项目上传到gitee">
+<meta property="og:url" content="https://github.com/liudacxz5/liudacxz5.github.io/2025/09/28/%E6%9C%AC%E5%9C%B0%E9%A1%B9%E7%9B%AE%E4%B8%8A%E4%BC%A0%E5%88%B0gitee/%E6%9C%AC%E5%9C%B0%E9%A1%B9%E7%9B%AE%E4%B8%8A%E4%BC%A0%E5%88%B0gitee/index.html">
+<meta property="og:site_name" content="RanGeRs_LD">
+<meta property="og:description" content="如何将本地项目上传到 Gitee：完整操作指南在日常开发中，将本地项目托管到代码仓库是必不可少的工作流程。Gitee（码云）作为国内知名的代码托管平台，提供了稳定高效的 Git 服务。下面将详细介绍如何将本地项目上传到 Gitee 仓库。 准备工作开始之前，需要确保本地环境已经安装并配置好 Git：  安装 Git：从 Git 官网下载并安装最新版本的 Git 配置用户信息：在命令行中执行以下命令">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://github.com/liudacxz5/liudacxz5.github.io/img/avatar.png">
+<meta property="article:published_time" content="2025-09-28T01:56:46.490Z">
+<meta property="article:modified_time" content="2025-09-28T01:56:49.468Z">
+<meta property="article:author" content="RanGeRs_LD">
+<meta property="article:tag" content="gitee">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/liudacxz5/liudacxz5.github.io/img/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "本地项目上传到gitee",
+  "url": "https://github.com/liudacxz5/liudacxz5.github.io/2025/09/28/%E6%9C%AC%E5%9C%B0%E9%A1%B9%E7%9B%AE%E4%B8%8A%E4%BC%A0%E5%88%B0gitee/%E6%9C%AC%E5%9C%B0%E9%A1%B9%E7%9B%AE%E4%B8%8A%E4%BC%A0%E5%88%B0gitee/",
+  "image": "https://github.com/liudacxz5/liudacxz5.github.io/img/avatar.png",
+  "datePublished": "2025-09-28T01:56:46.490Z",
+  "dateModified": "2025-09-28T01:56:49.468Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "RanGeRs_LD",
+      "url": "https://github.com/liudacxz5/liudacxz5.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://github.com/liudacxz5/liudacxz5.github.io/2025/09/28/%E6%9C%AC%E5%9C%B0%E9%A1%B9%E7%9B%AE%E4%B8%8A%E4%BC%A0%E5%88%B0gitee/%E6%9C%AC%E5%9C%B0%E9%A1%B9%E7%9B%AE%E4%B8%8A%E4%BC%A0%E5%88%B0gitee/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":1,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '本地项目上传到gitee',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">42</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">29</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">14</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background: linear-gradient(20deg, #0062be, #925696, #cc426e, #fb0347);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/avatar.png" alt="Logo"><span class="site-name">RanGeRs_LD</span></a><a class="nav-page-title" href="/"><span class="site-name">本地项目上传到gitee</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">本地项目上传到gitee</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-09-28T01:56:46.490Z" title="发表于 2025-09-28 01:56:46">2025-09-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-09-28T01:56:49.468Z" title="更新于 2025-09-28 01:56:49">2025-09-28</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="如何将本地项目上传到-Gitee：完整操作指南"><a href="#如何将本地项目上传到-Gitee：完整操作指南" class="headerlink" title="如何将本地项目上传到 Gitee：完整操作指南"></a>如何将本地项目上传到 Gitee：完整操作指南</h1><p>在日常开发中，将本地项目托管到代码仓库是必不可少的工作流程。Gitee（码云）作为国内知名的代码托管平台，提供了稳定高效的 Git 服务。下面将详细介绍如何将本地项目上传到 Gitee 仓库。</p>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><p>开始之前，需要确保本地环境已经安装并配置好 Git：</p>
+<ol>
+<li><strong>安装 Git</strong>：从 Git 官网下载并安装最新版本的 Git</li>
+<li><strong>配置用户信息</strong>：在命令行中执行以下命令，设置全局用户名和邮箱<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global user.name <span class="string">&quot;你的用户名&quot;</span></span><br><span class="line">git config --global user.email <span class="string">&quot;你的邮箱&quot;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="操作步骤"><a href="#操作步骤" class="headerlink" title="操作步骤"></a>操作步骤</h2><h3 id="第一步：在-Gitee-创建远程仓库"><a href="#第一步：在-Gitee-创建远程仓库" class="headerlink" title="第一步：在 Gitee 创建远程仓库"></a>第一步：在 Gitee 创建远程仓库</h3><ol>
+<li>登录 Gitee 账号，点击页面右上角的 “+” 号，选择”新建仓库”</li>
+<li>填写仓库基本信息：<ul>
+<li><strong>仓库名称</strong>：必填项，使用有意义的英文名称</li>
+<li><strong>路径</strong>：仓库的访问路径，通常与仓库名一致</li>
+<li><strong>仓库介绍</strong>：简要描述项目功能</li>
+<li><strong>开源选择</strong>：根据需求选择”公开”或”私有”</li>
+</ul>
+</li>
+<li><strong>重要提示</strong>：如果上传的是全新项目，建议不要勾选”使用 Readme 文件初始化仓库”，以避免后续合并冲突</li>
+<li>点击”创建”按钮，完成远程仓库创建</li>
+</ol>
+<p>创建成功后，记录生成的 HTTPS 或 SSH 仓库地址，后续步骤会用到。</p>
+<h3 id="第二步：初始化本地-Git-仓库"><a href="#第二步：初始化本地-Git-仓库" class="headerlink" title="第二步：初始化本地 Git 仓库"></a>第二步：初始化本地 Git 仓库</h3><p>打开命令行工具，进入项目根目录，执行以下操作：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 初始化本地Git仓库</span></span><br><span class="line">git init</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加所有文件到暂存区</span></span><br><span class="line">git add .</span><br><span class="line"></span><br><span class="line"><span class="comment"># 提交文件到本地仓库</span></span><br><span class="line">git commit -m <span class="string">&quot;初始提交：项目基础框架&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="第三步：关联远程仓库并推送"><a href="#第三步：关联远程仓库并推送" class="headerlink" title="第三步：关联远程仓库并推送"></a>第三步：关联远程仓库并推送</h3><p>将本地仓库与 Gitee 远程仓库建立连接：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 添加远程仓库地址</span></span><br><span class="line">git remote add origin https://gitee.com/你的用户名/仓库名.git</span><br><span class="line"></span><br><span class="line"><span class="comment"># 推送到远程仓库</span></span><br><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure>
+
+<p><strong>参数说明</strong>：<code>-u</code> 参数在首次推送时建立本地分支与远程分支的追踪关系，后续推送可直接使用 <code>git push</code> 命令。</p>
+<h2 id="特殊情况处理"><a href="#特殊情况处理" class="headerlink" title="特殊情况处理"></a>特殊情况处理</h2><h3 id="场景一：远程仓库已初始化文件"><a href="#场景一：远程仓库已初始化文件" class="headerlink" title="场景一：远程仓库已初始化文件"></a>场景一：远程仓库已初始化文件</h3><p>如果在 Gitee 创建仓库时勾选了”初始化 README 文件”，需要先拉取远程内容：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 拉取远程仓库内容并允许合并不相关历史</span></span><br><span class="line">git pull origin master --allow-unrelated-histories</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解决可能出现的合并冲突后，再次推送</span></span><br><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure>
+
+<h3 id="场景二：使用-SSH-方式连接"><a href="#场景二：使用-SSH-方式连接" class="headerlink" title="场景二：使用 SSH 方式连接"></a>场景二：使用 SSH 方式连接</h3><p>为提升安全性，建议配置 SSH 密钥：</p>
+<ol>
+<li><p><strong>生成 SSH 密钥</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">&quot;你的邮箱&quot;</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>添加公钥到 Gitee</strong>：将生成的 <code>id_rsa.pub</code> 文件内容添加到 Gitee 的 SSH 公钥管理页面</p>
+</li>
+<li><p><strong>使用 SSH 地址关联仓库</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git remote set-url origin git@gitee.com:你的用户名/仓库名.git</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="常用-Git-命令速查"><a href="#常用-Git-命令速查" class="headerlink" title="常用 Git 命令速查"></a>常用 Git 命令速查</h2><table>
+<thead>
+<tr>
+<th>操作场景</th>
+<th>命令示例</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>查看仓库状态</td>
+<td><code>git status</code></td>
+<td>查看文件修改状态</td>
+</tr>
+<tr>
+<td>查看提交历史</td>
+<td><code>git log</code></td>
+<td>显示提交记录</td>
+</tr>
+<tr>
+<td>撤销暂存文件</td>
+<td><code>git reset HEAD 文件名</code></td>
+<td>从暂存区移除文件</td>
+</tr>
+<tr>
+<td>创建新分支</td>
+<td><code>git branch 分支名</code></td>
+<td>基于当前分支创建新分支</td>
+</tr>
+<tr>
+<td>切换分支</td>
+<td><code>git checkout 分支名</code></td>
+<td>切换到指定分支</td>
+</tr>
+</tbody></table>
+<h2 id="常见问题解决方案"><a href="#常见问题解决方案" class="headerlink" title="常见问题解决方案"></a>常见问题解决方案</h2><h3 id="1-推送失败：权限不足"><a href="#1-推送失败：权限不足" class="headerlink" title="1. 推送失败：权限不足"></a>1. 推送失败：权限不足</h3><p><strong>问题现象</strong>：提示 <code>Permission denied</code> 错误<br><strong>解决方法</strong>：检查远程仓库地址是否正确，确认有该仓库的写入权限</p>
+<h3 id="2-推送失败：文件冲突"><a href="#2-推送失败：文件冲突" class="headerlink" title="2. 推送失败：文件冲突"></a>2. 推送失败：文件冲突</h3><p><strong>问题现象</strong>：提示 <code>failed to push some refs</code><br><strong>解决方法</strong>：先执行 <code>git pull</code> 拉取远程更新，解决冲突后再推送</p>
+<h3 id="3-误添加大文件"><a href="#3-误添加大文件" class="headerlink" title="3. 误添加大文件"></a>3. 误添加大文件</h3><p><strong>问题现象</strong>：推送时被拒绝，提示文件过大<br><strong>解决方法</strong>：使用 <code>git rm --cached 文件名</code> 移除文件，添加到大文件忽略列表</p>
+<h2 id="最佳实践建议"><a href="#最佳实践建议" class="headerlink" title="最佳实践建议"></a>最佳实践建议</h2><ol>
+<li><strong>提交信息规范</strong>：每次提交都应编写清晰的提交信息，说明本次修改的内容</li>
+<li><strong>分支管理</strong>：遵循 Git Flow 等分支管理策略，保持主分支稳定</li>
+<li><strong>忽略文件配置</strong>：创建 <code>.gitignore</code> 文件，排除编译生成文件、依赖库等不需要版本控制的文件</li>
+<li><strong>定期推送</strong>：养成定期推送代码的习惯，避免本地代码丢失</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>通过以上步骤，可以顺利完成本地项目到 Gitee 的上传工作。关键在于理解 Git 的基本工作流程：初始化仓库、添加文件、提交更改、关联远程仓库、推送代码。掌握这些基础操作后，可以进一步学习分支管理、标签管理、协作开发等高级功能，提升团队开发效率。</p>
+<p>Git 作为现代软件开发的核心工具，熟练使用它将极大提高开发工作效率。建议在实际项目中多加练习，逐步掌握更多实用技巧。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://github.com/liudacxz5/liudacxz5.github.io">RanGeRs_LD</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://github.com/liudacxz5/liudacxz5.github.io/2025/09/28/%E6%9C%AC%E5%9C%B0%E9%A1%B9%E7%9B%AE%E4%B8%8A%E4%BC%A0%E5%88%B0gitee/%E6%9C%AC%E5%9C%B0%E9%A1%B9%E7%9B%AE%E4%B8%8A%E4%BC%A0%E5%88%B0gitee/">https://github.com/liudacxz5/liudacxz5.github.io/2025/09/28/%E6%9C%AC%E5%9C%B0%E9%A1%B9%E7%9B%AE%E4%B8%8A%E4%BC%A0%E5%88%B0gitee/%E6%9C%AC%E5%9C%B0%E9%A1%B9%E7%9B%AE%E4%B8%8A%E4%BC%A0%E5%88%B0gitee/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://github.com/liudacxz5/liudacxz5.github.io" target="_blank">RanGeRs_LD</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/gitee/">gitee</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/11/27/RocketMQ%20python%E5%BC%82%E6%AD%A5%E6%B6%88%E8%B4%B9%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/RocketMQ%20python%E5%BC%82%E6%AD%A5%E6%B6%88%E8%B4%B9%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/" title="RocketMQ python异步消费数据丢失问题"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">RocketMQ python异步消费数据丢失问题</div></div><div class="info-2"><div class="info-item-1">RocketMQ Python 客户端异步消费数据丢失问题的深度解析在构建高吞吐量的数据处理系统时，批量聚合消费（Batch Consumption） 是一种常见的优化策略。该策略通常涉及在消费者回调（Callback）中将消息暂存至内存缓冲区，随后由独立的后台线程进行批量处理。 然而，在使用 RocketMQ 的 Python 客户端（基于 C++内核封装）实现此模式时，常会出现一个隐蔽的内存问题：虽然在回调函数中消息内容正常，但在后台线程读取缓冲区时，消息的 body 变为空值或乱码。 本文将从内存管理和跨语言调用（FFI）的角度，分析该现象产生的根本原因，并提供相应的解决方案。 1. 问题现象在典型的异步缓冲模式中，程序逻辑如下：  回调阶段：_callback 函数接收消息，将其直接追加（Append）到内存列表（List）中，并立即返回 CONSUME_SUCCESS。 处理阶段：后台线程定期扫描该列表，尝试读取消息内容进行业务处理。  异常表现：尽管 Python 对象依然存在于列表中，但当后台线程延迟访问 msg.body 时，读取到的数据为空（Empty）或无效数...</div></div></div></a><a class="pagination-related" href="/2025/09/19/%E9%AB%98%E8%BE%BE%E8%A7%82%E5%BD%B1%E9%A1%BA%E5%BA%8F/%E9%AB%98%E8%BE%BE%E8%A7%82%E5%BD%B1%E9%A1%BA%E5%BA%8F/" title="高达观影顺序"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">高达观影顺序</div></div><div class="info-2"><div class="info-item-1">好的，整理高达（Gundam）系列的观看顺序是一个常见的需求，因为它的世界观庞大、时间线复杂。主要有两种观看顺序：按播出顺序和按故事年表（主要是宇宙世纪 U.C.）顺序。 对于初次接触高达的观众，强烈推荐按照动画的播出顺序观看，因为这是制作方默认的观看路径，可以更好地理解作品的演变和粉丝的讨论语境。  推荐方案一：按播出顺序（适合所有观众）这个顺序能让你体验到高达系列技术和思想的进化过程，也是最经典的观看方式。这里主要列出核心的、关联性强的作品。 第一阶段：宇宙世纪（U.C.）的起源与发展 《机动战士高达》 (0079) (1979) 地位：一切的起点，U.C. 宇宙世纪的开篇之作。建议观看剧场版三部曲，节奏更快，画面也经过重制。   《机动战士Z高达》 (1985) 地位：0079之后的故事，公认的神作之一，风格较为深刻和沉重。   《机动战士高达ZZ》 (1986) 地位：紧接Z高达的结局，风格前期较为轻松，后期回归严肃。   《机动战士高达 逆袭的夏亚》 (1988) 地位：U.C.纪元第一阶段的终结，讲述了初代主角阿姆罗和夏亚的最终对决。    第二阶段：U.C. 纪元的...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">RanGeRs_LD</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">42</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">29</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">14</div></a></div><a id="card-info-btn" href="https://github.com/liudacxz5"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/liudacxz5" target="_blank" title="Github"><i class="fab fa-github" style="color: #hdhfbb;"></i></a><a class="social-icon" href="mailto:liudacxz5@163.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #000000;"></i></a><a class="social-icon" href="/ld309579590" target="_blank" title="Wexin"><i class="faw fa-weixin"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%B0%86%E6%9C%AC%E5%9C%B0%E9%A1%B9%E7%9B%AE%E4%B8%8A%E4%BC%A0%E5%88%B0-Gitee%EF%BC%9A%E5%AE%8C%E6%95%B4%E6%93%8D%E4%BD%9C%E6%8C%87%E5%8D%97"><span class="toc-number">1.</span> <span class="toc-text">如何将本地项目上传到 Gitee：完整操作指南</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-number">1.1.</span> <span class="toc-text">准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.2.</span> <span class="toc-text">操作步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E5%9C%A8-Gitee-%E5%88%9B%E5%BB%BA%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93"><span class="toc-number">1.2.1.</span> <span class="toc-text">第一步：在 Gitee 创建远程仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9A%E5%88%9D%E5%A7%8B%E5%8C%96%E6%9C%AC%E5%9C%B0-Git-%E4%BB%93%E5%BA%93"><span class="toc-number">1.2.2.</span> <span class="toc-text">第二步：初始化本地 Git 仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9A%E5%85%B3%E8%81%94%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93%E5%B9%B6%E6%8E%A8%E9%80%81"><span class="toc-number">1.2.3.</span> <span class="toc-text">第三步：关联远程仓库并推送</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%B9%E6%AE%8A%E6%83%85%E5%86%B5%E5%A4%84%E7%90%86"><span class="toc-number">1.3.</span> <span class="toc-text">特殊情况处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF%E4%B8%80%EF%BC%9A%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93%E5%B7%B2%E5%88%9D%E5%A7%8B%E5%8C%96%E6%96%87%E4%BB%B6"><span class="toc-number">1.3.1.</span> <span class="toc-text">场景一：远程仓库已初始化文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF%E4%BA%8C%EF%BC%9A%E4%BD%BF%E7%94%A8-SSH-%E6%96%B9%E5%BC%8F%E8%BF%9E%E6%8E%A5"><span class="toc-number">1.3.2.</span> <span class="toc-text">场景二：使用 SSH 方式连接</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8-Git-%E5%91%BD%E4%BB%A4%E9%80%9F%E6%9F%A5"><span class="toc-number">1.4.</span> <span class="toc-text">常用 Git 命令速查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">1.5.</span> <span class="toc-text">常见问题解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%8E%A8%E9%80%81%E5%A4%B1%E8%B4%A5%EF%BC%9A%E6%9D%83%E9%99%90%E4%B8%8D%E8%B6%B3"><span class="toc-number">1.5.1.</span> <span class="toc-text">1. 推送失败：权限不足</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%8E%A8%E9%80%81%E5%A4%B1%E8%B4%A5%EF%BC%9A%E6%96%87%E4%BB%B6%E5%86%B2%E7%AA%81"><span class="toc-number">1.5.2.</span> <span class="toc-text">2. 推送失败：文件冲突</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%AF%AF%E6%B7%BB%E5%8A%A0%E5%A4%A7%E6%96%87%E4%BB%B6"><span class="toc-number">1.5.3.</span> <span class="toc-text">3. 误添加大文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E5%BB%BA%E8%AE%AE"><span class="toc-number">1.6.</span> <span class="toc-text">最佳实践建议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.7.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/12/02/FastAPI%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%96%B9%E5%BC%8F%E6%8E%A8%E8%8D%90/FastAPI%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%96%B9%E5%BC%8F%E6%8E%A8%E8%8D%90/" title="FastAPI数据库连接方式">FastAPI数据库连接方式</a><time datetime="2025-12-02T03:01:40.885Z" title="发表于 2025-12-02 03:01:40">2025-12-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/12/02/FastApi%E5%9F%BA%E7%A1%80%E6%9E%B6%E6%9E%84/FastApi%E5%9F%BA%E7%A1%80%E6%9E%B6%E6%9E%84/" title="FastApi基础架构">FastApi基础架构</a><time datetime="2025-12-02T03:01:40.885Z" title="发表于 2025-12-02 03:01:40">2025-12-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/11/27/RocketMQ%20python%E5%BC%82%E6%AD%A5%E6%B6%88%E8%B4%B9%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/RocketMQ%20python%E5%BC%82%E6%AD%A5%E6%B6%88%E8%B4%B9%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/" title="RocketMQ python异步消费数据丢失问题">RocketMQ python异步消费数据丢失问题</a><time datetime="2025-11-27T05:54:01.646Z" title="发表于 2025-11-27 05:54:01">2025-11-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/28/%E6%9C%AC%E5%9C%B0%E9%A1%B9%E7%9B%AE%E4%B8%8A%E4%BC%A0%E5%88%B0gitee/%E6%9C%AC%E5%9C%B0%E9%A1%B9%E7%9B%AE%E4%B8%8A%E4%BC%A0%E5%88%B0gitee/" title="本地项目上传到gitee">本地项目上传到gitee</a><time datetime="2025-09-28T01:56:46.490Z" title="发表于 2025-09-28 01:56:46">2025-09-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/19/%E9%AB%98%E8%BE%BE%E8%A7%82%E5%BD%B1%E9%A1%BA%E5%BA%8F/%E9%AB%98%E8%BE%BE%E8%A7%82%E5%BD%B1%E9%A1%BA%E5%BA%8F/" title="高达观影顺序">高达观影顺序</a><time datetime="2025-09-19T07:43:38.644Z" title="发表于 2025-09-19 07:43:38">2025-09-19</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;2024 - 2025 By RanGeRs_LD</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.2.0</a><span class="footer-separator">|</span><span>主题 </span><a href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.4.0-b2</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">简</button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

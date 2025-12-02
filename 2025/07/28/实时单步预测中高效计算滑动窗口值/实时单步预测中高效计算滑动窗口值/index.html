@@ -1,0 +1,202 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>实时单步预测中高效计算滑动窗口值 | RanGeRs_LD</title><meta name="author" content="RanGeRs_LD"><meta name="copyright" content="RanGeRs_LD"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="在实时单步预测中高效计算滑动窗口值，关键在于避免每次窗口移动时重新计算所有元素。通过维护中间状态（如累加和、平方和等），可将时间复杂度从 O(N) 降为 O(1)。以下是核心策略及代码示例： 1. 滑动窗口均值（O(1) 更新）维护窗口元素和 window_sum： class SlidingWindowMean:    def __init__(self, window_size):">
+<meta property="og:type" content="article">
+<meta property="og:title" content="实时单步预测中高效计算滑动窗口值">
+<meta property="og:url" content="https://github.com/liudacxz5/liudacxz5.github.io/2025/07/28/%E5%AE%9E%E6%97%B6%E5%8D%95%E6%AD%A5%E9%A2%84%E6%B5%8B%E4%B8%AD%E9%AB%98%E6%95%88%E8%AE%A1%E7%AE%97%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E5%80%BC/%E5%AE%9E%E6%97%B6%E5%8D%95%E6%AD%A5%E9%A2%84%E6%B5%8B%E4%B8%AD%E9%AB%98%E6%95%88%E8%AE%A1%E7%AE%97%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E5%80%BC/index.html">
+<meta property="og:site_name" content="RanGeRs_LD">
+<meta property="og:description" content="在实时单步预测中高效计算滑动窗口值，关键在于避免每次窗口移动时重新计算所有元素。通过维护中间状态（如累加和、平方和等），可将时间复杂度从 O(N) 降为 O(1)。以下是核心策略及代码示例： 1. 滑动窗口均值（O(1) 更新）维护窗口元素和 window_sum： class SlidingWindowMean:    def __init__(self, window_size):">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://github.com/liudacxz5/liudacxz5.github.io/img/avatar.png">
+<meta property="article:published_time" content="2025-07-28T01:37:19.956Z">
+<meta property="article:modified_time" content="2025-07-28T01:37:20.278Z">
+<meta property="article:author" content="RanGeRs_LD">
+<meta property="article:tag" content="算法">
+<meta property="article:tag" content="时间序列">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/liudacxz5/liudacxz5.github.io/img/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "实时单步预测中高效计算滑动窗口值",
+  "url": "https://github.com/liudacxz5/liudacxz5.github.io/2025/07/28/%E5%AE%9E%E6%97%B6%E5%8D%95%E6%AD%A5%E9%A2%84%E6%B5%8B%E4%B8%AD%E9%AB%98%E6%95%88%E8%AE%A1%E7%AE%97%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E5%80%BC/%E5%AE%9E%E6%97%B6%E5%8D%95%E6%AD%A5%E9%A2%84%E6%B5%8B%E4%B8%AD%E9%AB%98%E6%95%88%E8%AE%A1%E7%AE%97%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E5%80%BC/",
+  "image": "https://github.com/liudacxz5/liudacxz5.github.io/img/avatar.png",
+  "datePublished": "2025-07-28T01:37:19.956Z",
+  "dateModified": "2025-07-28T01:37:20.278Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "RanGeRs_LD",
+      "url": "https://github.com/liudacxz5/liudacxz5.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://github.com/liudacxz5/liudacxz5.github.io/2025/07/28/%E5%AE%9E%E6%97%B6%E5%8D%95%E6%AD%A5%E9%A2%84%E6%B5%8B%E4%B8%AD%E9%AB%98%E6%95%88%E8%AE%A1%E7%AE%97%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E5%80%BC/%E5%AE%9E%E6%97%B6%E5%8D%95%E6%AD%A5%E9%A2%84%E6%B5%8B%E4%B8%AD%E9%AB%98%E6%95%88%E8%AE%A1%E7%AE%97%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E5%80%BC/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":1,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '实时单步预测中高效计算滑动窗口值',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">42</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">29</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">14</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background: linear-gradient(20deg, #0062be, #925696, #cc426e, #fb0347);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/avatar.png" alt="Logo"><span class="site-name">RanGeRs_LD</span></a><a class="nav-page-title" href="/"><span class="site-name">实时单步预测中高效计算滑动窗口值</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">实时单步预测中高效计算滑动窗口值</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-07-28T01:37:19.956Z" title="发表于 2025-07-28 01:37:19">2025-07-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-07-28T01:37:20.278Z" title="更新于 2025-07-28 01:37:20">2025-07-28</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%BC%80%E5%8F%91%E5%BF%83%E5%BE%97/">开发心得</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>在实时单步预测中高效计算滑动窗口值，关键在于避免每次窗口移动时重新计算所有元素。通过维护中间状态（如累加和、平方和等），可将时间复杂度从 O(N) 降为 O(1)。以下是核心策略及代码示例：</p>
+<h3 id="1-滑动窗口均值（O-1-更新）"><a href="#1-滑动窗口均值（O-1-更新）" class="headerlink" title="1. 滑动窗口均值（O(1) 更新）"></a>1. <strong>滑动窗口均值（O(1) 更新）</strong></h3><p>维护窗口元素和 <code>window_sum</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SlidingWindowMean</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, window_size</span>):</span><br><span class="line">        self.window_size = window_size</span><br><span class="line">        self.window = []</span><br><span class="line">        self.window_sum = <span class="number">0.0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">update</span>(<span class="params">self, new_value</span>):</span><br><span class="line">        self.window.append(new_value)</span><br><span class="line">        self.window_sum += new_value</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(self.window) &gt; self.window_size:</span><br><span class="line">            removed = self.window.pop(<span class="number">0</span>)</span><br><span class="line">            self.window_sum -= removed</span><br><span class="line">        <span class="keyword">return</span> self.window_sum / <span class="built_in">len</span>(self.window)</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-滑动窗口方差（O-1-更新）"><a href="#2-滑动窗口方差（O-1-更新）" class="headerlink" title="2. 滑动窗口方差（O(1) 更新）"></a>2. <strong>滑动窗口方差（O(1) 更新）</strong></h3><p>额外维护平方和 <code>sum_sq</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SlidingWindowVariance</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, window_size</span>):</span><br><span class="line">        self.window_size = window_size</span><br><span class="line">        self.window = []</span><br><span class="line">        self.sum_x = <span class="number">0.0</span></span><br><span class="line">        self.sum_sq = <span class="number">0.0</span>  <span class="comment"># 平方和</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">update</span>(<span class="params">self, new_value</span>):</span><br><span class="line">        self.window.append(new_value)</span><br><span class="line">        self.sum_x += new_value</span><br><span class="line">        self.sum_sq += new_value ** <span class="number">2</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(self.window) &gt; self.window_size:</span><br><span class="line">            removed = self.window.pop(<span class="number">0</span>)</span><br><span class="line">            self.sum_x -= removed</span><br><span class="line">            self.sum_sq -= removed ** <span class="number">2</span></span><br><span class="line"></span><br><span class="line">        n = <span class="built_in">len</span>(self.window)</span><br><span class="line">        mean = self.sum_x / n</span><br><span class="line">        variance = (self.sum_sq - n * mean ** <span class="number">2</span>) / (n - <span class="number">1</span>)  <span class="comment"># 样本方差</span></span><br><span class="line">        <span class="keyword">return</span> variance</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-滑动窗口中位数（O-log-N-更新）"><a href="#3-滑动窗口中位数（O-log-N-更新）" class="headerlink" title="3. 滑动窗口中位数（O(log N) 更新）"></a>3. <strong>滑动窗口中位数（O(log N) 更新）</strong></h3><p>使用两个堆（最大堆 + 最小堆）动态维护有序序列：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> heapq</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SlidingWindowMedian</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, window_size</span>):</span><br><span class="line">        self.window_size = window_size</span><br><span class="line">        self.window = []</span><br><span class="line">        self.max_heap = []  <span class="comment"># 较小一半（负数存储）</span></span><br><span class="line">        self.min_heap = []  <span class="comment"># 较大一半</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">update</span>(<span class="params">self, new_value</span>):</span><br><span class="line">        <span class="comment"># 添加新元素</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> self.max_heap <span class="keyword">or</span> new_value &lt;= -self.max_heap[<span class="number">0</span>]:</span><br><span class="line">            heapq.heappush(self.max_heap, -new_value)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            heapq.heappush(self.min_heap, new_value)</span><br><span class="line">    </span><br><span class="line">        <span class="comment"># 平衡堆</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(self.max_heap) &gt; <span class="built_in">len</span>(self.min_heap) + <span class="number">1</span>:</span><br><span class="line">            heapq.heappush(self.min_heap, -heapq.heappop(self.max_heap))</span><br><span class="line">        <span class="keyword">elif</span> <span class="built_in">len</span>(self.min_heap) &gt; <span class="built_in">len</span>(self.max_heap):</span><br><span class="line">            heapq.heappush(self.max_heap, -heapq.heappop(self.min_heap))</span><br><span class="line">    </span><br><span class="line">        <span class="comment"># 移除旧元素（延迟删除）</span></span><br><span class="line">        self.window.append(new_value)</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(self.window) &gt; self.window_size:</span><br><span class="line">            old = self.window.pop(<span class="number">0</span>)</span><br><span class="line">            <span class="keyword">if</span> old &lt;= -self.max_heap[<span class="number">0</span>]:</span><br><span class="line">                self.max_heap.remove(-old)  <span class="comment"># 实际中需用延迟删除优化</span></span><br><span class="line">                heapq.heapify(self.max_heap)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                self.min_heap.remove(old)</span><br><span class="line">                heapq.heapify(self.min_heap)</span><br><span class="line">    </span><br><span class="line">        <span class="comment"># 计算中位数</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(self.max_heap) &gt; <span class="built_in">len</span>(self.min_heap):</span><br><span class="line">            <span class="keyword">return</span> -self.max_heap[<span class="number">0</span>]</span><br><span class="line">        <span class="keyword">return</span> (-self.max_heap[<span class="number">0</span>] + self.min_heap[<span class="number">0</span>]) / <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-滑动窗口最大值（O-1-均摊）"><a href="#4-滑动窗口最大值（O-1-均摊）" class="headerlink" title="4. 滑动窗口最大值（O(1) 均摊）"></a>4. <strong>滑动窗口最大值（O(1) 均摊）</strong></h3><p>使用单调递减队列：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> deque</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SlidingWindowMax</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, window_size</span>):</span><br><span class="line">        self.window_size = window_size</span><br><span class="line">        self.window = deque()</span><br><span class="line">        self.max_deque = deque()  <span class="comment"># 存储索引或值</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">update</span>(<span class="params">self, new_value</span>):</span><br><span class="line">        <span class="comment"># 移除超出窗口的旧元素</span></span><br><span class="line">        <span class="keyword">if</span> self.window <span class="keyword">and</span> <span class="built_in">len</span>(self.window) &gt;= self.window_size:</span><br><span class="line">            old = self.window.popleft()</span><br><span class="line">            <span class="keyword">if</span> old == self.max_deque[<span class="number">0</span>]:</span><br><span class="line">                self.max_deque.popleft()</span><br><span class="line">    </span><br><span class="line">        <span class="comment"># 移除队尾小于新值的元素</span></span><br><span class="line">        <span class="keyword">while</span> self.max_deque <span class="keyword">and</span> self.max_deque[-<span class="number">1</span>] &lt; new_value:</span><br><span class="line">            self.max_deque.pop()</span><br><span class="line">        self.max_deque.append(new_value)</span><br><span class="line">        self.window.append(new_value)</span><br><span class="line">    </span><br><span class="line">        <span class="keyword">return</span> self.max_deque[<span class="number">0</span>]  <span class="comment"># 当前窗口最大值</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="关键优化点"><a href="#关键优化点" class="headerlink" title="关键优化点"></a><strong>关键优化点</strong></h3><ol>
+<li><p><strong>中间状态维护</strong>：</p>
+<ul>
+<li>均值&#x2F;方差：动态更新 <code>sum_x</code> 和 <code>sum_sq</code>。</li>
+<li>最大值：单调队列保证队首为最大值。</li>
+<li>中位数：双堆平衡确保中位数在堆顶。</li>
+</ul>
+</li>
+<li><p><strong>延迟删除</strong>（中位数计算）：</p>
+<ul>
+<li>实际删除时标记而非立即重建堆，在堆顶遇到标记元素时再删除。</li>
+</ul>
+</li>
+<li><p><strong>数值稳定性</strong>（方差计算）：</p>
+<ul>
+<li>使用 Welford 算法逐更新均值&#x2F;方差：<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">mean = mean + (new_value - mean) / n</span><br><span class="line">variance = variance + (new_value - mean) * (new_value - new_mean)</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ol>
+<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a><strong>应用场景</strong></h3><ul>
+<li><strong>金融预测</strong>：实时计算股价移动平均线（MA）。</li>
+<li><strong>物联网</strong>：传感器数据的实时平滑处理。</li>
+<li><strong>异常检测</strong>：动态阈值（均值±3倍标准差）。</li>
+</ul>
+<p>通过选择合适的数据结构维护中间状态，可显著提升实时预测系统的效率。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://github.com/liudacxz5/liudacxz5.github.io">RanGeRs_LD</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://github.com/liudacxz5/liudacxz5.github.io/2025/07/28/%E5%AE%9E%E6%97%B6%E5%8D%95%E6%AD%A5%E9%A2%84%E6%B5%8B%E4%B8%AD%E9%AB%98%E6%95%88%E8%AE%A1%E7%AE%97%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E5%80%BC/%E5%AE%9E%E6%97%B6%E5%8D%95%E6%AD%A5%E9%A2%84%E6%B5%8B%E4%B8%AD%E9%AB%98%E6%95%88%E8%AE%A1%E7%AE%97%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E5%80%BC/">https://github.com/liudacxz5/liudacxz5.github.io/2025/07/28/%E5%AE%9E%E6%97%B6%E5%8D%95%E6%AD%A5%E9%A2%84%E6%B5%8B%E4%B8%AD%E9%AB%98%E6%95%88%E8%AE%A1%E7%AE%97%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E5%80%BC/%E5%AE%9E%E6%97%B6%E5%8D%95%E6%AD%A5%E9%A2%84%E6%B5%8B%E4%B8%AD%E9%AB%98%E6%95%88%E8%AE%A1%E7%AE%97%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E5%80%BC/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://github.com/liudacxz5/liudacxz5.github.io" target="_blank">RanGeRs_LD</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%AE%97%E6%B3%95/">算法</a><a class="post-meta__tags" href="/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97/">时间序列</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/07/29/%E7%9F%A5%E8%AF%86%E8%92%B8%E9%A6%8F/%E7%9F%A5%E8%AF%86%E8%92%B8%E9%A6%8F/" title="知识蒸馏"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">知识蒸馏</div></div><div class="info-2"><div class="info-item-1">知识蒸馏（Knowledge Distillation）是一种模型压缩技术，核心思想是将一个庞大、复杂但性能强大的模型（称为“教师模型”）所学习到的“知识”，转移到一个更小、更轻量级的模型（称为“学生模型”）中去。 这里的“知识”并不是指模型训练的数据本身，而是指教师模型在训练数据上学到的输入到输出之间的映射关系，特别是那些隐性的、泛化性的模式和规律。 核心概念与过程 教师模型： 这是一个预先训练好的、通常非常大且复杂的模型（例如，大型的深度神经网络）。它在目标任务上表现优异，但计算开销大、推理速度慢。 学生模型： 这是一个目标模型，通常结构更简单、参数更少（例如，层数更少或宽度更小的网络）。它的目标是学习教师模型的行为，最终达到接近教师模型的性能，同时保持自身轻量化的优势。 蒸馏过程： 训练教师模型： 首先在训练数据集上训练好教师模型。 利用教师模型生成“软目标”： 这是知识蒸馏的关键。用教师模型对训练数据（或额外的未标注数据）进行预测。与通常只输出最终预测类别（硬目标）不同，教师模型会输出一个概率分布（软目标）。 硬目标： [0, 0, 1, 0, 0] （表示属于第3类） ...</div></div></div></a><a class="pagination-related" href="/2025/07/28/%E5%AE%9E%E6%97%B6%E5%8D%95%E6%AD%A5%E9%A2%84%E6%B5%8B%E4%B8%AD%E9%AB%98%E6%95%88%E8%AE%A1%E7%AE%97%E6%BB%9E%E5%90%8E%E5%80%BC/%E5%AE%9E%E6%97%B6%E5%8D%95%E6%AD%A5%E9%A2%84%E6%B5%8B%E4%B8%AD%E9%AB%98%E6%95%88%E8%AE%A1%E7%AE%97%E6%BB%9E%E5%90%8E%E5%80%BC/" title="实时单步预测中高效计算滞后值"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">实时单步预测中高效计算滞后值</div></div><div class="info-2"><div class="info-item-1">在实时单步预测中高效计算滞后值（如前一时刻的销售额、上一小时的温度等）是提升预测效率的关键。以下是针对滞后值计算的优化策略，从基础到高级方案： 1. 状态保持法（最优方案）核心思想：维护预测状态对象，避免重复查询 class PredictionState:    def __init__(self):        self.last_value = None  # 存储上一个预测值        self.historical_buffer = deque(maxlen=100)  # 存储历史窗口      def update(self, new_prediction):        # 更新滞后特征        self.historical_buffer.append(new_prediction)        self.last_value = new_prediction      def get_lag_features(self):        return &#123;            &#x27;lag_1&#x27;: self.last_...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/07/28/%E5%AE%9E%E6%97%B6%E5%8D%95%E6%AD%A5%E9%A2%84%E6%B5%8B%E4%B8%AD%E9%AB%98%E6%95%88%E8%AE%A1%E7%AE%97%E6%BB%9E%E5%90%8E%E5%80%BC/%E5%AE%9E%E6%97%B6%E5%8D%95%E6%AD%A5%E9%A2%84%E6%B5%8B%E4%B8%AD%E9%AB%98%E6%95%88%E8%AE%A1%E7%AE%97%E6%BB%9E%E5%90%8E%E5%80%BC/" title="实时单步预测中高效计算滞后值"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-28</div><div class="info-item-2">实时单步预测中高效计算滞后值</div></div><div class="info-2"><div class="info-item-1">在实时单步预测中高效计算滞后值（如前一时刻的销售额、上一小时的温度等）是提升预测效率的关键。以下是针对滞后值计算的优化策略，从基础到高级方案： 1. 状态保持法（最优方案）核心思想：维护预测状态对象，避免重复查询 class PredictionState:    def __init__(self):        self.last_value = None  # 存储上一个预测值        self.historical_buffer = deque(maxlen=100)  # 存储历史窗口      def update(self, new_prediction):        # 更新滞后特征        self.historical_buffer.append(new_prediction)        self.last_value = new_prediction      def get_lag_features(self):        return &#123;            &#x27;lag_1&#x27;: self.last_...</div></div></div></a><a class="pagination-related" href="/2024/07/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E9%80%92%E5%BD%92/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E9%80%92%E5%BD%92/" title="数据结构-递归"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-07-01</div><div class="info-item-2">数据结构-递归</div></div><div class="info-2"><div class="info-item-1">简述了算法的基础知识，包含算法复杂度、进制计算、位运算、原码反码补码等</div></div></div></a><a class="pagination-related" href="/2025/04/08/%E7%AE%97%E6%B3%95%E4%B9%A0%E9%A2%98-%E5%88%A4%E6%96%AD%E6%98%AF%E4%B8%8D%E6%98%AF%E5%AD%90%E5%AD%97%E7%AC%A6%E4%B8%B2/%E7%AE%97%E6%B3%95%E4%B9%A0%E9%A2%98-%E5%88%A4%E6%96%AD%E6%98%AF%E4%B8%8D%E6%98%AF%E5%AD%90%E5%AD%97%E7%AC%A6%E4%B8%B2/" title="算法习题-判断是不是子字符串"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-08</div><div class="info-item-2">算法习题-判断是不是子字符串</div></div><div class="info-2"><div class="info-item-1">给定两个字符串 s和 t ，判断 s是否为 t 的子序列。你可以认为 s 和 t 中仅包含英文小写字母。字符串 t 可能会很长（长度n ~&#x3D; 500,000），而 s 是个短字符串（长度 &lt;&#x3D;100）。 字符串的一个子序列是原始字符串删除一些（也可以不删除）字符而不改变剩余字符相对位置形成的新字符串。（例如，”ace”是”abcde”的一个子序列，而”aec”不是）。 输入描述:共两行，第一行为字符串s,  第二行为字符串t字符串t的长度 1&lt;=n&lt;=500000字符串s的长度 1&lt;=m&lt;=100  输出描述:输出true或者是false，true表示是s是t的子序列，false表示s不是t的子序列 示例1输入abcahbgdc输出true 示例2输入axcahbgdc输出false import java.util.ArrayList;/** * 解题思路： * 1、要求子串顺序和父串的顺序一致并且字串出现的字母一定要在父串内有 * 2、循环遍历子串和父串，如果子串匹配到了父串那么把子串在父串的坐标写入list中 * 3、判断l...</div></div></div></a><a class="pagination-related" href="/2025/04/08/%E7%AE%97%E6%B3%95%E4%B9%A0%E9%A2%98-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%88%87%E5%89%B2/%E7%AE%97%E6%B3%95%E4%B9%A0%E9%A2%98-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%88%87%E5%89%B2/" title="算法习题-字符串切割"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-08</div><div class="info-item-2">算法习题-字符串切割</div></div><div class="info-2"><div class="info-item-1">给定一个非空字符串S，其被N个‘-’分隔成N+1的子串，给定正整数K，要求除第一个子串外，其余的子串每K个字符组成新的子串，并用‘-’分隔。 对于新组成的每一个子串，如果它含有的小写字母比大写字母多，则将这个子串的所有大写字母转换为小写字母；反之，如果它含有的大写字母比小写字母多，则将这个子串的所有小写字母转换为大写字母；大小写字母的数量相等时，不做转换。 输入描述:输入为两行，第一行为参数K，第二行为字符串S。输出描述:输出转换后的字符串。 示例1输入312abc-abCABc-4aB@输出12abc-abc-ABC-4aB-@说明：子串为12abc、abCABc、4aB@，第一个子串保留，后面的子串每3个字符一组为abC、ABc、4aB、@，abC中小写字母较多，转换为abc，ABc中大写字母较多，转换为ABC，4aB中大小写字母都为1个，不做转换，@中没有字母，连起来即12abc-abc-ABC-4aB-@  示例2输入1212abc-abCABc-4aB@输出12abc-abCABc4aB@说明子串为12abc、abCABc、4aB@，第一个子串保留，后面的子串每12个字...</div></div></div></a><a class="pagination-related" href="/2025/04/09/%E7%AE%97%E6%B3%95%E4%B9%A0%E9%A2%98-%E6%95%B0%E6%8D%AE%E5%88%86%E7%B1%BB/%E7%AE%97%E6%B3%95%E4%B9%A0%E9%A2%98-%E6%95%B0%E6%8D%AE%E5%88%86%E7%B1%BB/" title="算法习题-数据分类"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-09</div><div class="info-item-2">算法习题-数据分类</div></div><div class="info-2"><div class="info-item-1">对一个数据a进行分类，分类方法是，此数据a(4个字节大小)的4个字节相加对一个给定值b取模，如果得到的结果小于一个给定的值c则数据a为有效类型，其类型为取模的值。如果得到的结果大于或者等于c则数据a为无效类型。 比如一个数据a &#x3D; 0x01010101，b &#x3D; 3按照分类方法计算：(0x01 + 0x01 + 0x01 + 0x01) % 3 &#x3D; 1所以如果c等于2，则此a就是有效类型，其类型为1如果c等于1，则此a是无效类型 又比如一个数据a &#x3D; 0x01010103，b &#x3D; 3按分类方法计算：(0x01 + 0x01 + 0x01 + 0x03) % 3 &#x3D; 0所以如果c &#x3D; 2则此a就是有效类型，其类型为0如果c &#x3D; 0则此a是无效类型 输入12个数据，第一个数据为c，第二个数据为b，剩余10个数据为需要分类的数据 请找到有效类型中包含数据最多的类型，并输出该类型含有多少个数据 输入描述输入12个数据用空格分割，第一个数据为c，第二个数据为b，剩余10个数据为需要分类的数据。 输出描述请找到有效...</div></div></div></a><a class="pagination-related" href="/2025/04/08/%E7%AE%97%E6%B3%95%E4%B9%A0%E9%A2%98-%E6%B1%82%E6%9C%80%E5%A4%A7%E6%95%B0/%E7%AE%97%E6%B3%95%E4%B9%A0%E9%A2%98-%E6%B1%82%E6%9C%80%E5%A4%A7%E6%95%B0/" title="算法习题-求最大数"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-08</div><div class="info-item-2">算法习题-求最大数</div></div><div class="info-2"><div class="info-item-1">小组中每位都有一张卡片，卡片上是6位以内的正整数。将卡片连起来可以组成多种数字，计算组成的最大数字。 输入描述,号分割的多个正整数字符串，不需要考虑非数字字符情况，小组最多25个人。 输出描述最大的数字字符串 示例1输入：22,221输出：22221说明： 将22和221组合成最大值的排列是22221。 示例2输入：4589,101,41425,9999输出：9999458941425101说明： 将4589, 101, 41425, 9999组合成最大值的排列是9999458941425101。 import java.util.Arrays;/** * 解题思路： * a+b&gt;b+a 那么a比b大 */public class make_max_number &#123;    public static String solution(String str) &#123;        StringBuilder resultBulider = new StringBuilder();        //切分后的字符串        String[] splited ...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">RanGeRs_LD</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">42</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">29</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">14</div></a></div><a id="card-info-btn" href="https://github.com/liudacxz5"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/liudacxz5" target="_blank" title="Github"><i class="fab fa-github" style="color: #hdhfbb;"></i></a><a class="social-icon" href="mailto:liudacxz5@163.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #000000;"></i></a><a class="social-icon" href="/ld309579590" target="_blank" title="Wexin"><i class="faw fa-weixin"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E5%9D%87%E5%80%BC%EF%BC%88O-1-%E6%9B%B4%E6%96%B0%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">1. 滑动窗口均值（O(1) 更新）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E6%96%B9%E5%B7%AE%EF%BC%88O-1-%E6%9B%B4%E6%96%B0%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">2. 滑动窗口方差（O(1) 更新）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E4%B8%AD%E4%BD%8D%E6%95%B0%EF%BC%88O-log-N-%E6%9B%B4%E6%96%B0%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">3. 滑动窗口中位数（O(log N) 更新）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E6%9C%80%E5%A4%A7%E5%80%BC%EF%BC%88O-1-%E5%9D%87%E6%91%8A%EF%BC%89"><span class="toc-number">4.</span> <span class="toc-text">4. 滑动窗口最大值（O(1) 均摊）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E4%BC%98%E5%8C%96%E7%82%B9"><span class="toc-number">5.</span> <span class="toc-text">关键优化点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">6.</span> <span class="toc-text">应用场景</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/12/02/FastAPI%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%96%B9%E5%BC%8F%E6%8E%A8%E8%8D%90/FastAPI%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%96%B9%E5%BC%8F%E6%8E%A8%E8%8D%90/" title="FastAPI数据库连接方式">FastAPI数据库连接方式</a><time datetime="2025-12-02T03:01:40.885Z" title="发表于 2025-12-02 03:01:40">2025-12-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/12/02/FastApi%E5%9F%BA%E7%A1%80%E6%9E%B6%E6%9E%84/FastApi%E5%9F%BA%E7%A1%80%E6%9E%B6%E6%9E%84/" title="FastApi基础架构">FastApi基础架构</a><time datetime="2025-12-02T03:01:40.885Z" title="发表于 2025-12-02 03:01:40">2025-12-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/11/27/RocketMQ%20python%E5%BC%82%E6%AD%A5%E6%B6%88%E8%B4%B9%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/RocketMQ%20python%E5%BC%82%E6%AD%A5%E6%B6%88%E8%B4%B9%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/" title="RocketMQ python异步消费数据丢失问题">RocketMQ python异步消费数据丢失问题</a><time datetime="2025-11-27T05:54:01.646Z" title="发表于 2025-11-27 05:54:01">2025-11-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/28/%E6%9C%AC%E5%9C%B0%E9%A1%B9%E7%9B%AE%E4%B8%8A%E4%BC%A0%E5%88%B0gitee/%E6%9C%AC%E5%9C%B0%E9%A1%B9%E7%9B%AE%E4%B8%8A%E4%BC%A0%E5%88%B0gitee/" title="本地项目上传到gitee">本地项目上传到gitee</a><time datetime="2025-09-28T01:56:46.490Z" title="发表于 2025-09-28 01:56:46">2025-09-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/19/%E9%AB%98%E8%BE%BE%E8%A7%82%E5%BD%B1%E9%A1%BA%E5%BA%8F/%E9%AB%98%E8%BE%BE%E8%A7%82%E5%BD%B1%E9%A1%BA%E5%BA%8F/" title="高达观影顺序">高达观影顺序</a><time datetime="2025-09-19T07:43:38.644Z" title="发表于 2025-09-19 07:43:38">2025-09-19</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;2024 - 2025 By RanGeRs_LD</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.2.0</a><span class="footer-separator">|</span><span>主题 </span><a href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.4.0-b2</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">简</button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

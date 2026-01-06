@@ -1,0 +1,237 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Docker 环境下 Java 应用 Native Thread 耗尽问题的分析与解决报告 | RanGeRs_LD</title><meta name="author" content="RanGeRs_LD"><meta name="copyright" content="RanGeRs_LD"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Docker 环境下 Java 应用 Native Thread 耗尽问题的分析与解决报告摘要：本文档详细记录了 Canal 集群在 Docker 容器化部署中遇到的 java.lang.OutOfMemoryError: unable to create new native thread 故障。经过对操作系统内核参数、Docker 资源限制及 Linux PAM 机制的深入排查，最终定位由于容">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker 环境下 Java 应用 Native Thread 耗尽问题的分析与解决报告">
+<meta property="og:url" content="https://github.com/liudacxz5/liudacxz5.github.io/2026/01/06/canal%E9%83%A8%E7%BD%B2%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/canal%E9%83%A8%E7%BD%B2%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/index.html">
+<meta property="og:site_name" content="RanGeRs_LD">
+<meta property="og:description" content="Docker 环境下 Java 应用 Native Thread 耗尽问题的分析与解决报告摘要：本文档详细记录了 Canal 集群在 Docker 容器化部署中遇到的 java.lang.OutOfMemoryError: unable to create new native thread 故障。经过对操作系统内核参数、Docker 资源限制及 Linux PAM 机制的深入排查，最终定位由于容">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://github.com/liudacxz5/liudacxz5.github.io/img/avatar.png">
+<meta property="article:published_time" content="2026-01-06T03:24:52.627Z">
+<meta property="article:modified_time" content="2026-01-06T03:24:53.808Z">
+<meta property="article:author" content="RanGeRs_LD">
+<meta property="article:tag" content="docker">
+<meta property="article:tag" content="canal">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/liudacxz5/liudacxz5.github.io/img/avatar.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Docker 环境下 Java 应用 Native Thread 耗尽问题的分析与解决报告",
+  "url": "https://github.com/liudacxz5/liudacxz5.github.io/2026/01/06/canal%E9%83%A8%E7%BD%B2%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/canal%E9%83%A8%E7%BD%B2%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/",
+  "image": "https://github.com/liudacxz5/liudacxz5.github.io/img/avatar.png",
+  "datePublished": "2026-01-06T03:24:52.627Z",
+  "dateModified": "2026-01-06T03:24:53.808Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "RanGeRs_LD",
+      "url": "https://github.com/liudacxz5/liudacxz5.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://github.com/liudacxz5/liudacxz5.github.io/2026/01/06/canal%E9%83%A8%E7%BD%B2%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/canal%E9%83%A8%E7%BD%B2%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":1,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Docker 环境下 Java 应用 Native Thread 耗尽问题的分析与解决报告',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">44</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">33</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">14</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background: linear-gradient(20deg, #0062be, #925696, #cc426e, #fb0347);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/avatar.png" alt="Logo"><span class="site-name">RanGeRs_LD</span></a><a class="nav-page-title" href="/"><span class="site-name">Docker 环境下 Java 应用 Native Thread 耗尽问题的分析与解决报告</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Docker 环境下 Java 应用 Native Thread 耗尽问题的分析与解决报告</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-01-06T03:24:52.627Z" title="发表于 2026-01-06 03:24:52">2026-01-06</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-01-06T03:24:53.808Z" title="更新于 2026-01-06 03:24:53">2026-01-06</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%BC%80%E5%8F%91%E5%BF%83%E5%BE%97/">开发心得</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="Docker-环境下-Java-应用-Native-Thread-耗尽问题的分析与解决报告"><a href="#Docker-环境下-Java-应用-Native-Thread-耗尽问题的分析与解决报告" class="headerlink" title="Docker 环境下 Java 应用 Native Thread 耗尽问题的分析与解决报告"></a>Docker 环境下 Java 应用 Native Thread 耗尽问题的分析与解决报告</h1><p><strong>摘要</strong>：本文档详细记录了 Canal 集群在 Docker 容器化部署中遇到的 <code>java.lang.OutOfMemoryError: unable to create new native thread</code> 故障。经过对操作系统内核参数、Docker 资源限制及 Linux PAM 机制的深入排查，最终定位由于容器内部默认配置覆盖了 Docker 资源配额导致线程数受限。本文阐述了详细的排查路径及标准化的解决方案。</p>
+<hr>
+<h2 id="1-问题背景-Background"><a href="#1-问题背景-Background" class="headerlink" title="1. 问题背景 (Background)"></a>1. 问题背景 (Background)</h2><ul>
+<li><strong>业务场景</strong>：部署 Canal 高可用集群（多实例），配置 TSDB 为 MySQL 模式，负责将数据实时同步至 RocketMQ。</li>
+<li><strong>运行环境</strong>：Docker Compose, Linux (CentOS&#x2F;Alibaba Cloud Linux), JDK 8&#x2F;11。</li>
+<li><strong>部署架构</strong>：Canal Server 与 RocketMQ Broker 混合部署，属于高并发、高线程密度的计算密集型场景。</li>
+</ul>
+<h2 id="2-故障现象-Symptoms"><a href="#2-故障现象-Symptoms" class="headerlink" title="2. 故障现象 (Symptoms)"></a>2. 故障现象 (Symptoms)</h2><p>在增加 Canal 实例数量后，服务启动失败并频繁重启，应用日志中出现大量以下异常：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">ERROR org.I0Itec.zkclient.ZkEventThread</span><br><span class="line">java.lang.OutOfMemoryError: unable to create new native thread</span><br><span class="line">    at java.lang.Thread.start0(Native Method)</span><br><span class="line">    at java.lang.Thread.start(Thread.java:719)</span><br><span class="line">    ...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>与此同时，监控显示服务器物理内存剩余空间充足（&gt;80%），且堆内存（Heap）使用率处于正常范围，未发生常规的内存溢出（Heap Space OOM）。</p>
+<h2 id="3-排查过程与根因分析-Investigation-RCA"><a href="#3-排查过程与根因分析-Investigation-RCA" class="headerlink" title="3. 排查过程与根因分析 (Investigation &amp; RCA)"></a>3. 排查过程与根因分析 (Investigation &amp; RCA)</h2><p>针对该错误，排查过程分为以下三个阶段：</p>
+<h3 id="3-1-阶段一：系统级资源排查（排除法）"><a href="#3-1-阶段一：系统级资源排查（排除法）" class="headerlink" title="3.1 阶段一：系统级资源排查（排除法）"></a>3.1 阶段一：系统级资源排查（排除法）</h3><p>首先排查宿主机及 Docker 守护进程层面的限制：</p>
+<ul>
+<li><strong>物理内存</strong>：剩余空间充裕，排除物理内存不足的可能性。</li>
+<li><strong>内核 PID 限制</strong>：检查 <code>sysctl kernel.pid_max</code>，值为 4,194,304，无瓶颈。</li>
+<li><strong>Docker PIDs 限制</strong>：检查 Cgroup 限制（<code>pids.max</code>），确认无限制或限制值极高。</li>
+</ul>
+<h3 id="3-2-阶段二：用户级配额排查（发现矛盾）"><a href="#3-2-阶段二：用户级配额排查（发现矛盾）" class="headerlink" title="3.2 阶段二：用户级配额排查（发现矛盾）"></a>3.2 阶段二：用户级配额排查（发现矛盾）</h3><p>在容器内部执行命令检查用户进程限制：</p>
+<ul>
+<li>执行 <code>ulimit -u</code> 显示结果为 <strong>65535</strong>。</li>
+<li>然而，当前系统总线程数（RocketMQ + Canal）约为 3800-4200 左右，远未达到 65535。</li>
+</ul>
+<p><strong>异常点</strong>：系统在线程数仅达到 4000 左右时即拒绝创建新线程，与 <code>ulimit</code> 显示的阈值存在严重偏差。</p>
+<h3 id="3-3-阶段三：内核态限制确认（锁定根因）"><a href="#3-3-阶段三：内核态限制确认（锁定根因）" class="headerlink" title="3.3 阶段三：内核态限制确认（锁定根因）"></a>3.3 阶段三：内核态限制确认（锁定根因）</h3><p>绕过 Shell 环境，直接查看故障 Java 进程在 <code>/proc</code> 文件系统中的实时限制配置：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> /proc/&lt;PID&gt;/limits | grep <span class="string">&quot;Max processes&quot;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>输出结果：</strong></p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">Limit                     Soft Limit           Hard Limit           Units   </span><br><span class="line">Max processes             4096                 65535                processes </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>根因定论</strong>：<br>尽管 Docker 容器配置了 65535 的硬限制（Hard Limit），但 Canal 启动脚本中执行了用户切换（<code>su - admin</code>）。Linux 的 PAM（Pluggable Authentication Modules）机制在切换用户时，读取了容器镜像内默认的 <code>/etc/security/limits.d/20-nproc.conf</code> 配置文件，强制将 <strong>Soft Limit 重置为 4096</strong>。</p>
+<p>当 RocketMQ 与多个 Canal 实例共存时，累计线程数迅速逼近 4096 阈值，导致操作系统拦截新线程的创建。</p>
+<hr>
+<h2 id="4-解决方案-Resolution"><a href="#4-解决方案-Resolution" class="headerlink" title="4. 解决方案 (Resolution)"></a>4. 解决方案 (Resolution)</h2><p>为彻底解决该问题并消除潜在隐患，实施了以下三个维度的优化措施：</p>
+<h3 id="4-1-容器配置层：强制覆盖-PAM-限制"><a href="#4-1-容器配置层：强制覆盖-PAM-限制" class="headerlink" title="4.1 容器配置层：强制覆盖 PAM 限制"></a>4.1 容器配置层：强制覆盖 PAM 限制</h3><p>利用 Docker Volume 挂载机制，将宿主机正确的 Limits 配置文件映射至容器内部，覆盖镜像默认配置。</p>
+<ol>
+<li><strong>宿主机创建配置文件</strong> <code>mysql-limits.conf</code>：</li>
+</ol>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">* soft nproc 65535</span><br><span class="line">* hard nproc 65535</span><br><span class="line">* soft nofile 65535</span><br><span class="line">* hard nofile 65535</span><br><span class="line">root soft nproc 65535</span><br><span class="line">root hard nproc 65535</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><strong>修改 <code>docker-compose.yml</code> 挂载路径</strong>：</li>
+</ol>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">volumes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">./mysql-limits.conf:/etc/security/limits.conf</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">./mysql-limits.conf:/etc/security/limits.d/20-nproc.conf</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2-JVM-运行层：优化线程栈内存"><a href="#4-2-JVM-运行层：优化线程栈内存" class="headerlink" title="4.2 JVM 运行层：优化线程栈内存"></a>4.2 JVM 运行层：优化线程栈内存</h3><p>在微服务高并发场景下，默认的 1MB 线程栈（Thread Stack Size）造成了不必要的内存开销。</p>
+<ul>
+<li><strong>措施</strong>：在 <code>JAVA_OPTS</code> 中添加 <code>-Xss256k</code>。</li>
+<li><strong>收益</strong>：在 2000 个线程的规模下，可节省约 1.5GB 的物理内存，降低 Native Memory OOM 风险。</li>
+</ul>
+<h3 id="4-3-操作系统层：调整虚拟内存映射"><a href="#4-3-操作系统层：调整虚拟内存映射" class="headerlink" title="4.3 操作系统层：调整虚拟内存映射"></a>4.3 操作系统层：调整虚拟内存映射</h3><p>针对 RocketMQ 与 Canal 强依赖堆外内存（Direct Memory）和文件映射的特性，调整内核参数。</p>
+<ul>
+<li><strong>措施</strong>：<code>sysctl -w vm.max_map_count=262144</code>。</li>
+</ul>
+<hr>
+<h2 id="5-验证结果-Verification"><a href="#5-验证结果-Verification" class="headerlink" title="5. 验证结果 (Verification)"></a>5. 验证结果 (Verification)</h2><p>实施上述变更并重启服务后，进行如下验证：</p>
+<ol>
+<li><strong>进程限制确认</strong>：执行 <code>cat /proc/&lt;PID&gt;/limits</code>，确认 <code>Max processes</code> 的 Soft Limit 已变更为 <strong>65535</strong>。</li>
+<li><strong>服务状态</strong>：Canal 多实例均成功启动，日志输出 <code>start successful</code>。</li>
+<li><strong>数据同步</strong>：RocketMQ Topic 数据写入正常，无连接超时报错。</li>
+</ol>
+<hr>
+<h2 id="6-总结与建议-Conclusion"><a href="#6-总结与建议-Conclusion" class="headerlink" title="6. 总结与建议 (Conclusion)"></a>6. 总结与建议 (Conclusion)</h2><p>本次故障揭示了 Docker 容器化部署中常见的配置陷阱。建议后续运维遵循以下最佳实践：</p>
+<ol>
+<li><strong>配置一致性验证</strong>：不应仅依赖 <code>ulimit</code> 命令查看配额，应以进程维度的 <code>/proc/&lt;PID&gt;/limits</code> 为准。</li>
+<li><strong>关注混合部署风险</strong>：在多中间件（MQ, DB, Cache）混合部署环境下，需提前评估总线程数和文件句柄数，打破默认的 Linux 4096 进程数限制。</li>
+<li><strong>标准化 JVM 参数</strong>：对于容器化 Java 应用，建议标准化配置 <code>-Xss</code> 参数以优化内存利用率。</li>
+</ol>
+<hr>
+<h3 id="下一步建议"><a href="#下一步建议" class="headerlink" title="下一步建议"></a>下一步建议</h3><p>既然您已经完成了这次高难度的故障排查，建议您：</p>
+<ul>
+<li><strong>将此配置模板化</strong>：把这份 <code>docker-compose.yml</code> 和 <code>mysql-limits.conf</code> 作为您公司的标准部署模板。</li>
+<li><strong>监控告警</strong>：如果在生产环境，建议添加针对 <strong>线程数 (Thread Count)</strong> 的监控告警，阈值设定在 3000 或 4000，以便在触发限制前提前预警。</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://github.com/liudacxz5/liudacxz5.github.io">RanGeRs_LD</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://github.com/liudacxz5/liudacxz5.github.io/2026/01/06/canal%E9%83%A8%E7%BD%B2%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/canal%E9%83%A8%E7%BD%B2%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/">https://github.com/liudacxz5/liudacxz5.github.io/2026/01/06/canal%E9%83%A8%E7%BD%B2%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/canal%E9%83%A8%E7%BD%B2%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://github.com/liudacxz5/liudacxz5.github.io" target="_blank">RanGeRs_LD</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/docker/">docker</a><a class="post-meta__tags" href="/tags/canal/">canal</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/01/06/FastAPI%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%96%B9%E5%BC%8F%E6%8E%A8%E8%8D%90/FastAPI%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%96%B9%E5%BC%8F%E6%8E%A8%E8%8D%90/" title="FastAPI数据库连接方式"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">FastAPI数据库连接方式</div></div><div class="info-2"><div class="info-item-1">FastAPI数据库连接方式推荐在 FastAPI 框架下结合 Pandas 操作数据库时，选择高效的数据库连接方式需综合考虑 异步性能、代码简洁性 和 Pandas 兼容性。以下是几种推荐方案及具体实现：  1. 异步驱动 + SQLAlchemy Core（推荐）结合异步数据库驱动（如 asyncpg）和 SQLAlchemy 的异步核心（SQLAlchemy Core），既能利用 FastAPI 的异步优势，又兼容 Pandas 的同步操作。 步骤说明 安装依赖： pip install fastapi sqlalchemy asyncpg pandas databases 配置异步数据库连接： from sqlalchemy.ext.asyncio import create_async_engine, AsyncSessionfrom sqlalchemy.orm import sessionmakerfrom sqlalchemy import text# 异步引擎配置（以 PostgreSQL 为例）DATABASE_URL = &quot;postgresql+a...</div></div></div></a><a class="pagination-related" href="/2025/12/02/%E4%BB%8E%E9%9B%B6%E6%9E%84%E5%BB%BA%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E6%B9%96%E4%BB%93%EF%BC%9AApache%20Iceberg%20+%20MinIO%20+%20Trino%20%E5%85%A8%E6%94%BB%E7%95%A5/%E4%BB%8E%E9%9B%B6%E6%9E%84%E5%BB%BA%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E6%B9%96%E4%BB%93%EF%BC%9AApache%20Iceberg%20+%20MinIO%20+%20Trino%20%E5%85%A8%E6%94%BB%E7%95%A5/" title="从零构建本地数据湖仓：Apache Iceberg + MinIO + Trino 全攻略"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">从零构建本地数据湖仓：Apache Iceberg + MinIO + Trino 全攻略</div></div><div class="info-2"><div class="info-item-1">🚀 从零构建本地数据湖仓：Apache Iceberg + MinIO + Trino 全攻略 摘要：本文记录了如何在 Windows (WSL2) 环境下，使用 Docker 打造一套基于 Apache Iceberg 的现代数据湖仓。涵盖了从 MinIO 对象存储搭建、Python (PyIceberg) 模拟业务数据写入，到 Trino 进行 SQL 数据分析的全流程。重点总结了在 Docker 网络配置、S3 协议兼容性以及数据类型校验上遇到的“深坑”与解决方案。   1. 架构设计：存算分离为了体验最先进的 Data Lakehouse 架构，我们采用了典型的存算分离设计：  存储层 (Storage): MinIO (模拟 AWS S3)，负责存放实际的数据文件 (Parquet) 和元数据。 元数据管理 (Catalog): Iceberg REST Catalog，负责管理表的结构、快照和文件列表。 写入计算 (Write): **Python (PyIceberg)**，模拟业务系统解析 Excel 并通过流式&#x2F;批处理写入数据。 查询计算 (Read...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/08/12/docker%20compose%E9%83%A8%E7%BD%B2rabbitMQ/docker%20compose%E9%83%A8%E7%BD%B2rabbitMQ/" title="docker compose部署rabbitMQ"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-12</div><div class="info-item-2">docker compose部署rabbitMQ</div></div><div class="info-2"><div class="info-item-1">Docker Compose 部署 RabbitMQ1. 创建 docker-compose.yml 文件version: &#x27;3.1&#x27;services:  rabbitmq:    restart: always    image: rabbitmq:management  # 使用自带管理插件的镜像    container_name: rabbitmq   # 自定义容器名称    hostname: rabbit           # 设置主机名    ports:      - &quot;5672:5672&quot;    # AMQP 协议端口      - &quot;15672:15672&quot;  # 管理界面端口    environment:      TZ: Asia/Shanghai        # 时区设置      RABBITMQ_DEFAULT_USER: rabbit  # 默认用户名      RABBITMQ_DEFAULT_PASS: 123456  # 默认密码    volumes:      - D:/...</div></div></div></a><a class="pagination-related" href="/2025/03/13/docker%E5%9B%9B%E7%A7%8D%E9%87%8D%E5%90%AF%E6%96%B9%E5%BC%8F/docker%E5%9B%9B%E7%A7%8D%E9%87%8D%E5%90%AF%E6%96%B9%E5%BC%8F/" title="docker四种重启方式"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-13</div><div class="info-item-2">docker四种重启方式</div></div><div class="info-2"><div class="info-item-1">简述了docker容器的重启策略</div></div></div></a><a class="pagination-related" href="/2025/07/08/%E7%A6%BB%E7%BA%BF%E7%8E%AF%E5%A2%83%E8%8E%B7%E5%8F%96docker%E5%8C%85/%E7%A6%BB%E7%BA%BF%E7%8E%AF%E5%A2%83%E8%8E%B7%E5%8F%96docker%E5%8C%85/" title="离线环境获取docker包"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-08</div><div class="info-item-2">离线环境获取docker包</div></div><div class="info-2"><div class="info-item-1">离线环境获取docker包，以mysql为例</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">RanGeRs_LD</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">44</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">33</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">14</div></a></div><a id="card-info-btn" href="https://github.com/liudacxz5"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/liudacxz5" target="_blank" title="Github"><i class="fab fa-github" style="color: #hdhfbb;"></i></a><a class="social-icon" href="mailto:liudacxz5@163.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #000000;"></i></a><a class="social-icon" href="/ld309579590" target="_blank" title="Wexin"><i class="faw fa-weixin"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Docker-%E7%8E%AF%E5%A2%83%E4%B8%8B-Java-%E5%BA%94%E7%94%A8-Native-Thread-%E8%80%97%E5%B0%BD%E9%97%AE%E9%A2%98%E7%9A%84%E5%88%86%E6%9E%90%E4%B8%8E%E8%A7%A3%E5%86%B3%E6%8A%A5%E5%91%8A"><span class="toc-number">1.</span> <span class="toc-text">Docker 环境下 Java 应用 Native Thread 耗尽问题的分析与解决报告</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AF-Background"><span class="toc-number">1.1.</span> <span class="toc-text">1. 问题背景 (Background)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%95%85%E9%9A%9C%E7%8E%B0%E8%B1%A1-Symptoms"><span class="toc-number">1.2.</span> <span class="toc-text">2. 故障现象 (Symptoms)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%8E%92%E6%9F%A5%E8%BF%87%E7%A8%8B%E4%B8%8E%E6%A0%B9%E5%9B%A0%E5%88%86%E6%9E%90-Investigation-RCA"><span class="toc-number">1.3.</span> <span class="toc-text">3. 排查过程与根因分析 (Investigation &amp; RCA)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E9%98%B6%E6%AE%B5%E4%B8%80%EF%BC%9A%E7%B3%BB%E7%BB%9F%E7%BA%A7%E8%B5%84%E6%BA%90%E6%8E%92%E6%9F%A5%EF%BC%88%E6%8E%92%E9%99%A4%E6%B3%95%EF%BC%89"><span class="toc-number">1.3.1.</span> <span class="toc-text">3.1 阶段一：系统级资源排查（排除法）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E9%98%B6%E6%AE%B5%E4%BA%8C%EF%BC%9A%E7%94%A8%E6%88%B7%E7%BA%A7%E9%85%8D%E9%A2%9D%E6%8E%92%E6%9F%A5%EF%BC%88%E5%8F%91%E7%8E%B0%E7%9F%9B%E7%9B%BE%EF%BC%89"><span class="toc-number">1.3.2.</span> <span class="toc-text">3.2 阶段二：用户级配额排查（发现矛盾）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E9%98%B6%E6%AE%B5%E4%B8%89%EF%BC%9A%E5%86%85%E6%A0%B8%E6%80%81%E9%99%90%E5%88%B6%E7%A1%AE%E8%AE%A4%EF%BC%88%E9%94%81%E5%AE%9A%E6%A0%B9%E5%9B%A0%EF%BC%89"><span class="toc-number">1.3.3.</span> <span class="toc-text">3.3 阶段三：内核态限制确认（锁定根因）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88-Resolution"><span class="toc-number">1.4.</span> <span class="toc-text">4. 解决方案 (Resolution)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E5%AE%B9%E5%99%A8%E9%85%8D%E7%BD%AE%E5%B1%82%EF%BC%9A%E5%BC%BA%E5%88%B6%E8%A6%86%E7%9B%96-PAM-%E9%99%90%E5%88%B6"><span class="toc-number">1.4.1.</span> <span class="toc-text">4.1 容器配置层：强制覆盖 PAM 限制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-JVM-%E8%BF%90%E8%A1%8C%E5%B1%82%EF%BC%9A%E4%BC%98%E5%8C%96%E7%BA%BF%E7%A8%8B%E6%A0%88%E5%86%85%E5%AD%98"><span class="toc-number">1.4.2.</span> <span class="toc-text">4.2 JVM 运行层：优化线程栈内存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%B1%82%EF%BC%9A%E8%B0%83%E6%95%B4%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E6%98%A0%E5%B0%84"><span class="toc-number">1.4.3.</span> <span class="toc-text">4.3 操作系统层：调整虚拟内存映射</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E9%AA%8C%E8%AF%81%E7%BB%93%E6%9E%9C-Verification"><span class="toc-number">1.5.</span> <span class="toc-text">5. 验证结果 (Verification)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E6%80%BB%E7%BB%93%E4%B8%8E%E5%BB%BA%E8%AE%AE-Conclusion"><span class="toc-number">1.6.</span> <span class="toc-text">6. 总结与建议 (Conclusion)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8B%E4%B8%80%E6%AD%A5%E5%BB%BA%E8%AE%AE"><span class="toc-number">1.6.1.</span> <span class="toc-text">下一步建议</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/01/06/FastAPI%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%96%B9%E5%BC%8F%E6%8E%A8%E8%8D%90/FastAPI%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%96%B9%E5%BC%8F%E6%8E%A8%E8%8D%90/" title="FastAPI数据库连接方式">FastAPI数据库连接方式</a><time datetime="2026-01-06T03:25:48.024Z" title="发表于 2026-01-06 03:25:48">2026-01-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/01/06/FastApi%E5%9F%BA%E7%A1%80%E6%9E%B6%E6%9E%84/FastApi%E5%9F%BA%E7%A1%80%E6%9E%B6%E6%9E%84/" title="FastApi基础架构">FastApi基础架构</a><time datetime="2026-01-06T03:25:48.024Z" title="发表于 2026-01-06 03:25:48">2026-01-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/01/06/canal%E9%83%A8%E7%BD%B2%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/canal%E9%83%A8%E7%BD%B2%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/" title="Docker 环境下 Java 应用 Native Thread 耗尽问题的分析与解决报告">Docker 环境下 Java 应用 Native Thread 耗尽问题的分析与解决报告</a><time datetime="2026-01-06T03:24:52.627Z" title="发表于 2026-01-06 03:24:52">2026-01-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/12/02/%E4%BB%8E%E9%9B%B6%E6%9E%84%E5%BB%BA%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E6%B9%96%E4%BB%93%EF%BC%9AApache%20Iceberg%20+%20MinIO%20+%20Trino%20%E5%85%A8%E6%94%BB%E7%95%A5/%E4%BB%8E%E9%9B%B6%E6%9E%84%E5%BB%BA%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE%E6%B9%96%E4%BB%93%EF%BC%9AApache%20Iceberg%20+%20MinIO%20+%20Trino%20%E5%85%A8%E6%94%BB%E7%95%A5/" title="从零构建本地数据湖仓：Apache Iceberg + MinIO + Trino 全攻略">从零构建本地数据湖仓：Apache Iceberg + MinIO + Trino 全攻略</a><time datetime="2025-12-02T03:00:18.305Z" title="发表于 2025-12-02 03:00:18">2025-12-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/11/27/RocketMQ%20python%E5%BC%82%E6%AD%A5%E6%B6%88%E8%B4%B9%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/RocketMQ%20python%E5%BC%82%E6%AD%A5%E6%B6%88%E8%B4%B9%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/" title="RocketMQ python异步消费数据丢失问题">RocketMQ python异步消费数据丢失问题</a><time datetime="2025-11-27T05:54:01.646Z" title="发表于 2025-11-27 05:54:01">2025-11-27</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;2024 - 2026 By RanGeRs_LD</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.2.0</a><span class="footer-separator">|</span><span>主题 </span><a href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.4.0-b2</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">简</button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
